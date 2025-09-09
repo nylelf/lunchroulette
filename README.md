@@ -82,6 +82,30 @@ python -m http.server 8000
 # then visit http://localhost:8000
 ```
 
+### 🗺️ Enabling Google Maps Features (Optional)
+
+To enable the "Find Nearby Restaurants" feature:
+
+1. **Get a Google Maps API Key**:
+   - Visit [Google Cloud Console](https://developers.google.com/maps/gmp-get-started)
+   - Create a new project or select existing one
+   - Enable the **Maps JavaScript API** and **Places API**
+   - Create credentials (API key)
+
+2. **Configure the API Key**:
+   - Open `index.html`
+   - Find line 11: `<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script> -->`
+   - Replace `YOUR_API_KEY` with your actual API key
+   - Uncomment the line by removing `<!--` and `-->`
+
+3. **Test the Feature**:
+   - Spin the wheel
+   - Click "Find Nearby" in the result modal
+   - Allow location access when prompted
+   - View nearby restaurants on the map
+
+**Note**: Google Maps API is free for most personal use cases (up to $200/month credit).
+
 ## 🌐 Browser Support
 
 - ✅ Chrome 70+

@@ -435,7 +435,8 @@ let currentState = {
     history: JSON.parse(localStorage.getItem('lunchHistory') || '[]'),
     settings: JSON.parse(localStorage.getItem('lunchSettings') || '{"avoidRepeats": true, "considerWeather": true}'),
     currentLanguage: localStorage.getItem('appLanguage') || 'en',
-    isSpinning: false
+    isSpinning: false,
+    currentRotation: 0 // Track current wheel rotation
 };
 
 // DOM Elements
@@ -527,6 +528,10 @@ function generateRoulette() {
     const options = getCurrentOptions();
     const wheel = elements.rouletteWheel;
     
+    // Reset wheel rotation when regenerating
+    currentState.currentRotation = 0;
+    wheel.style.transform = 'rotate(0deg)';
+    
     // Clear existing content
     wheel.innerHTML = '';
     
@@ -555,6 +560,7 @@ function createSegmentPath(options) {
         const segmentAngle = 360 / options.length;
         const startAngle = segmentAngle * index - 90; // Start from top
         const endAngle = startAngle + segmentAngle;
+        
         
         // Convert to radians
         const startRad = (startAngle * Math.PI) / 180;
@@ -680,14 +686,49 @@ function spinWheel() {
     const selectedIndex = Math.floor(Math.random() * options.length);
     const selectedOption = options[selectedIndex];
     
-    // Calculate rotation
+    // Calculate rotation - simplified approach
     const segmentAngle = 360 / options.length;
-    const targetAngle = selectedIndex * segmentAngle + (segmentAngle / 2);
     const spins = 5 + Math.random() * 3; // 5-8 full rotations
-    const finalRotation = spins * 360 + targetAngle;
     
-    // Apply rotation
-    elements.rouletteWheel.style.transform = `rotate(${finalRotation}deg)`;
+    // Calculate where we want the selected segment to end up (at the top, 0 degrees)
+    // The segment center is at: -90 + selectedIndex * segmentAngle + segmentAngle/2
+    const segmentCenter = -90 + selectedIndex * segmentAngle + (segmentAngle / 2);
+    
+    // To get the segment at the top (0 degrees), we need to rotate by -segmentCenter
+    const targetEndRotation = -segmentCenter;
+    
+    // Add full spins and normalize to positive values
+    const totalRotation = spins * 360 + targetEndRotation;
+    
+    // Calculate the rotation relative to current position
+    let rotationFromCurrent = totalRotation - (currentState.currentRotation % 360);
+    
+    // Ensure we always rotate forward (positive direction)
+    if (rotationFromCurrent < 0) {
+        rotationFromCurrent += 360;
+    }
+    
+    // Final absolute rotation position
+    const finalAbsoluteRotation = currentState.currentRotation + rotationFromCurrent;
+    
+    // Debug
+    console.log(`Selected: ${selectedOption.name} (index ${selectedIndex})`);
+    console.log(`Segment center: ${segmentCenter}°, Target end: ${targetEndRotation}°`);
+    console.log(`Current: ${currentState.currentRotation}°, Rotation: ${rotationFromCurrent}°, Final: ${finalAbsoluteRotation}°`);
+    
+    // Apply rotation with smooth transition
+    elements.rouletteWheel.style.transition = 'none';
+    elements.rouletteWheel.style.transform = `rotate(${currentState.currentRotation}deg)`;
+    
+    // Force reflow
+    elements.rouletteWheel.offsetHeight;
+    
+    // Apply the rotation animation
+    elements.rouletteWheel.style.transition = 'transform 4s cubic-bezier(0.23, 1, 0.320, 1)';
+    elements.rouletteWheel.style.transform = `rotate(${finalAbsoluteRotation}deg)`;
+    
+    // Update state for next spin
+    currentState.currentRotation = finalAbsoluteRotation;
     
     // Show result after animation
     setTimeout(() => {
@@ -799,7 +840,7 @@ function setupModalControls() {
     // Modal action buttons
     document.getElementById('findNearbyBtn').addEventListener('click', () => {
         if (typeof google === 'undefined') {
-            alert('Google Maps is not available. Please check your internet connection.');
+            showGoogleMapsNotAvailable();
             return;
         }
         
@@ -1398,6 +1439,29 @@ function openInMaps(restaurant) {
     // Try to open in native maps app first, fall back to Google Maps
     const mapsUrl = `https://maps.google.com/maps?daddr=${lat},${lng}&q=${name}`;
     window.open(mapsUrl, '_blank');
+}
+
+function showGoogleMapsNotAvailable() {
+    const mapContainer = document.getElementById('mapContainer');
+    const restaurantList = document.getElementById('restaurantList');
+    
+    // Show map container
+    mapContainer.style.display = 'block';
+    
+    restaurantList.innerHTML = `
+        <div class="location-prompt">
+            <div class="location-icon">🗺️</div>
+            <p><strong>Google Maps Not Available</strong></p>
+            <p>To use the nearby restaurants feature, you need to:</p>
+            <ol style="text-align: left; margin: 10px 0; padding-left: 20px;">
+                <li>Get a free Google Maps API key from <a href="https://developers.google.com/maps/gmp-get-started" target="_blank" style="color: #4285F4;">Google Cloud Console</a></li>
+                <li>Enable the Maps JavaScript API and Places API</li>
+                <li>Replace YOUR_API_KEY in index.html with your actual key</li>
+                <li>Uncomment the Google Maps script tag</li>
+            </ol>
+            <p style="font-size: 0.9rem; opacity: 0.7;">This feature requires an API key for accurate restaurant data.</p>
+        </div>
+    `;
 }
 
 function showLocationError(message) {
