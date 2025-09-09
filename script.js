@@ -690,49 +690,37 @@ function spinWheel() {
     const segmentAngle = 360 / options.length;
     const spins = 5 + Math.random() * 3; // 5-8 full rotations
     
-    // In SVG generation: segments start at -90° (top) and go clockwise
-    // Index 0: starts at -90°, center at -90° + segmentAngle/2  
-    // Index 1: starts at -90° + segmentAngle, center at -90° + segmentAngle + segmentAngle/2
+    // The pointer is at the top (12 o'clock position)
+    // Segments are drawn starting from -90° (top) and go clockwise
+    // Segment 0 center: -90° + segmentAngle/2
+    // Segment 1 center: -90° + segmentAngle + segmentAngle/2
     // etc.
     
-    // The wheel rotates clockwise, but we want the selected segment center to align with pointer at top (0°)
-    // If the user reports seeing the "previous" option, it means we need to adjust our selection
-    
+    // Calculate where the selected segment center currently is (relative to 0° = right side)
+    // In our SVG: segment 0 starts at -90°, so its center is at -90° + segmentAngle/2
     const segmentCenterAngle = -90 + selectedIndex * segmentAngle + (segmentAngle / 2);
     
-    // Since user reports seeing the previous option, let's try reversing the selection
-    // by using the next segment in the sequence
-    const adjustedIndex = (selectedIndex + 1) % options.length;
-    const adjustedSegmentCenterAngle = -90 + adjustedIndex * segmentAngle + (segmentAngle / 2);
-    
-    // Target rotation to bring the adjusted segment center to pointer position (0°)
-    const targetRotation = -adjustedSegmentCenterAngle;
+    // The pointer is at -90° (top). To align the segment center with the pointer:
+    // We need to rotate by the negative of the segment center angle
+    const targetRotation = -segmentCenterAngle;
     
     // Add multiple spins for animation effect
     const totalRotation = spins * 360 + targetRotation;
     
-    // Normalize current rotation to 0-360 range for calculation
-    const normalizedCurrentRotation = ((currentState.currentRotation % 360) + 360) % 360;
-    const normalizedTotalRotation = ((totalRotation % 360) + 360) % 360;
-    
-    // Calculate rotation needed - ensure we always go forward (clockwise)
-    let rotationNeeded = normalizedTotalRotation - normalizedCurrentRotation;
-    if (rotationNeeded <= 0) {
-        rotationNeeded += 360;
-    }
-    
-    // Add the extra spins
-    rotationNeeded += Math.floor(spins) * 360;
-    
-    const finalRotation = currentState.currentRotation + rotationNeeded;
+    // Calculate the final rotation needed
+    // We want to go from current rotation to the target rotation with extra spins
+    const finalRotation = currentState.currentRotation + totalRotation;
     
     // Debug logging
-    console.log(`Selected: ${selectedOption.name} (original index ${selectedIndex}, adjusted index ${adjustedIndex})`);
-    console.log(`Original segment center: ${segmentCenterAngle}°, Adjusted segment center: ${adjustedSegmentCenterAngle}°`);
+    console.log(`=== SPIN DEBUG ===`);
+    console.log(`Selected: ${selectedOption.name} (index ${selectedIndex})`);
+    console.log(`Segment angle: ${segmentAngle}° (${options.length} segments)`);
+    console.log(`Segment center angle: ${segmentCenterAngle}°`);
     console.log(`Target rotation: ${targetRotation}°`);
     console.log(`Current rotation: ${currentState.currentRotation}°`);
-    console.log(`Rotation needed: ${rotationNeeded}°`);
+    console.log(`Total rotation with spins: ${totalRotation}°`);
     console.log(`Final rotation: ${finalRotation}°`);
+    console.log(`==================`);
     
     // Apply rotation animation
     elements.rouletteWheel.style.transition = 'none';
@@ -867,7 +855,7 @@ function setupModalControls() {
         const selectedOption = currentOptions.find(option => option.name === resultName);
         
         if (selectedOption) {
-            // Use browser-based search as fallback
+            // Always use the improved browser-based search (no API key required)
             findRestaurantsWithoutAPI(selectedOption);
         }
     });
@@ -1521,49 +1509,95 @@ function displaySearchSuggestions(suggestions, selectedOption, userLocation) {
     const restaurantList = document.getElementById('restaurantList');
     const restaurantMap = document.getElementById('restaurantMap');
     
-    // Display a simple map placeholder or search interface
+    // Display a search interface with multiple options
     restaurantMap.innerHTML = `
-        <div style="display: flex; align-items: center; justify-content: center; height: 200px; background: #f0f0f0; border-radius: 8px; color: #666;">
-            <div style="text-align: center;">
-                <div style="font-size: 2rem; margin-bottom: 10px;">${selectedOption.icon}</div>
-                <div>Find <strong>${selectedOption.name}</strong> nearby</div>
-                ${userLocation ? `<div style="font-size: 0.9rem; margin-top: 5px;">📍 ${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}</div>` : ''}
+        <div style="padding: 20px; background: linear-gradient(135deg, ${selectedOption.color}20, ${selectedOption.color}10); border-radius: 12px; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 10px;">${selectedOption.icon}</div>
+            <div style="font-size: 1.2rem; font-weight: 600; color: #333; margin-bottom: 8px;">Find ${selectedOption.name}</div>
+            <div style="color: #666; font-size: 0.95rem;">in ${currentState.selectedCity.charAt(0).toUpperCase() + currentState.selectedCity.slice(1)}</div>
+            ${userLocation ? `<div style="font-size: 0.85rem; margin-top: 8px; color: #888;">📍 Location detected</div>` : '<div style="font-size: 0.85rem; margin-top: 8px; color: #888;">📍 Using city-based search</div>'}
+            
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                <button onclick="searchInMaps('${selectedOption.category} restaurants', '${currentState.selectedCity}')" 
+                        style="padding: 8px 16px; background: ${selectedOption.color}; color: white; border: none; border-radius: 20px; font-size: 0.9rem; cursor: pointer;">
+                    🍽️ All ${selectedOption.name}
+                </button>
+                <button onclick="searchInMaps('${selectedOption.category} restaurants near me', '${currentState.selectedCity}')" 
+                        style="padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 20px; font-size: 0.9rem; cursor: pointer;">
+                    📍 Near Me
+                </button>
+                <button onclick="searchInMaps('best ${selectedOption.category} restaurants', '${currentState.selectedCity}')" 
+                        style="padding: 8px 16px; background: #ffc107; color: #333; border: none; border-radius: 20px; font-size: 0.9rem; cursor: pointer;">
+                    ⭐ Top Rated
+                </button>
             </div>
         </div>
     `;
     
     restaurantList.innerHTML = `
         <div style="margin-bottom: 15px;">
-            <h4 style="margin: 0 0 10px 0;">Popular ${selectedOption.name} spots in ${currentState.selectedCity.charAt(0).toUpperCase() + currentState.selectedCity.slice(1)}:</h4>
+            <h4 style="margin: 0 0 10px 0; color: #333;">Popular ${selectedOption.name} spots:</h4>
         </div>
         ${suggestions.map((restaurant, index) => `
-            <div class="restaurant-item">
+            <div class="restaurant-item" style="transition: transform 0.2s; cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                 <div class="restaurant-info">
-                    <div class="restaurant-name">${restaurant}</div>
+                    <div class="restaurant-name" style="font-weight: 600;">${restaurant}</div>
                     <div class="restaurant-details">
                         <span class="restaurant-rating">⭐ 4.${Math.floor(Math.random() * 5) + 2}</span>
                         <span class="restaurant-distance">${(Math.random() * 2 + 0.5).toFixed(1)}km</span>
                         <span>${'💰'.repeat(Math.floor(Math.random() * 3) + 1)}</span>
+                        <span style="color: ${selectedOption.color}; font-size: 0.8rem;">• ${selectedOption.category}</span>
                     </div>
                 </div>
                 <div class="restaurant-actions">
-                    <button class="map-btn" onclick="searchInMaps('${restaurant}', '${currentState.selectedCity}')">
-                        Search Maps
+                    <button class="map-btn" onclick="searchInMaps('${restaurant}', '${currentState.selectedCity}')" 
+                            style="background: ${selectedOption.color}; border-color: ${selectedOption.color};">
+                        🗺️ Find
                     </button>
                 </div>
             </div>
         `).join('')}
-        <div style="margin-top: 15px; padding: 10px; background: #f9f9f9; border-radius: 8px; font-size: 0.9rem; color: #666; text-align: center;">
-            💡 Tip: These are popular ${selectedOption.name} spots in ${currentState.selectedCity.charAt(0).toUpperCase() + currentState.selectedCity.slice(1)}. Click "Search Maps" to find exact locations and reviews.
+        
+        <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 10px; border-left: 4px solid ${selectedOption.color};">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                <span style="font-size: 1.5rem;">💡</span>
+                <span style="font-weight: 600; color: #333;">Quick Search Tips</span>
+            </div>
+            <div style="font-size: 0.9rem; color: #666; line-height: 1.4;">
+                • Click "Find" to search specific restaurants on Google Maps<br>
+                • Use the quick search buttons above for broader searches<br>
+                • Try searching "${selectedOption.category} ${currentState.selectedCity}" for more options
+            </div>
         </div>
     `;
 }
 
 // Global function to search in maps
 window.searchInMaps = function(restaurantName, city) {
-    const query = encodeURIComponent(`${restaurantName} ${city} restaurant`);
-    const mapsUrl = `https://www.google.com/maps/search/${query}`;
-    window.open(mapsUrl, '_blank');
+    const query = encodeURIComponent(`${restaurantName} ${city}`);
+    
+    // Try to detect if user is on mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // On mobile, try to open native maps app first
+        const nativeMapsUrl = `maps://?q=${query}`;
+        const googleMapsUrl = `https://www.google.com/maps/search/${query}`;
+        
+        // Try native maps first, fallback to Google Maps web
+        const link = document.createElement('a');
+        link.href = nativeMapsUrl;
+        link.click();
+        
+        // Fallback to web version after a short delay
+        setTimeout(() => {
+            window.open(googleMapsUrl, '_blank');
+        }, 2000);
+    } else {
+        // On desktop, open Google Maps web directly
+        const mapsUrl = `https://www.google.com/maps/search/${query}`;
+        window.open(mapsUrl, '_blank');
+    }
 };
 
 function showGoogleMapsNotAvailable() {
