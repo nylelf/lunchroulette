@@ -2,7 +2,7 @@
 
 A fun and interactive web application to help you decide what to eat for lunch! Spin the wheel and discover great food options in Australian cities.
 
-[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://yourusername.github.io/lunch-roulette)
+[![Live Demo](https://img.shields.io/badge/demo-live-success)](https://nylelf.github.io/lunch-roulette-web)
 [![Netlify Status](https://img.shields.io/badge/netlify-deployed-success)](https://lunch-roulette-test.netlify.app)
 
 ![Lunch Roulette Preview](https://via.placeholder.com/800x400/FF6B35/FFFFFF?text=Lunch+Roulette+🍽️)
@@ -21,7 +21,7 @@ A fun and interactive web application to help you decide what to eat for lunch! 
 
 ## 🚀 Live Demo
 
-- **Production Environment**: [GitHub Pages](https://yourusername.github.io/lunch-roulette)
+- **Production Environment**: [GitHub Pages](https://nylelf.github.io/lunch-roulette-web)
 - **Testing Environment**: [Netlify](https://lunch-roulette-test.netlify.app)
 
 ## 🎮 How to Use
@@ -67,12 +67,12 @@ A fun and interactive web application to help you decide what to eat for lunch! 
 ## 🚀 Quick Start
 
 ### Online (Recommended)
-Just visit the [live demo](https://yourusername.github.io/lunch-roulette) - no installation required!
+Just visit the [live demo](https://nylelf.github.io/lunch-roulette-web) - no installation required!
 
 ### Local Development
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/lunch-roulette.git
+git clone https://github.com/nylelf/lunch-roulette-web.git
 cd lunch-roulette
 
 # Open in browser
@@ -156,7 +156,7 @@ Having issues? Here are some common solutions:
 
 <div align="center">
 
-**[🍽️ Try Lunch Roulette Now!](https://yourusername.github.io/lunch-roulette)**
+**[🍽️ Try Lunch Roulette Now!](https://nylelf.github.io/lunch-roulette-web)**
 
 Made with ❤️ for lunch decisions everywhere
 
