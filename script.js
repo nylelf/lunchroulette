@@ -39,7 +39,14 @@ const translations = {
         'premium': 'Premium ($20-35)',
         'sydney': 'Sydney',
         'melbourne': 'Melbourne',
-        'brisbane': 'Brisbane'
+        'brisbane': 'Brisbane',
+        'nearby-restaurants': 'Nearby Restaurants',
+        'finding-restaurants': 'Finding nearby restaurants...',
+        'location-required': 'Location Access Required',
+        'location-denied': 'Location access denied. Please enable location services.',
+        'no-restaurants-found': 'No restaurants found nearby. Try expanding your search area.',
+        'navigate': 'Navigate',
+        'try-again': 'Try Again'
     },
     zh: {
         'app-title': '午餐轮盘',
@@ -78,7 +85,14 @@ const translations = {
         'premium': '高端 ($20-35)',
         'sydney': '悉尼',
         'melbourne': '墨尔本',
-        'brisbane': '布里斯班'
+        'brisbane': '布里斯班',
+        'nearby-restaurants': '附近餐厅',
+        'finding-restaurants': '正在寻找附近餐厅...',
+        'location-required': '需要位置权限',
+        'location-denied': '位置访问被拒绝。请启用位置服务。',
+        'no-restaurants-found': '未找到附近餐厅。请尝试扩大搜索范围。',
+        'navigate': '导航',
+        'try-again': '重试'
     },
     es: {
         'app-title': 'Ruleta de Almuerzo',
@@ -784,7 +798,23 @@ function setupModalControls() {
     
     // Modal action buttons
     document.getElementById('findNearbyBtn').addEventListener('click', () => {
-        alert('Finding nearby restaurants... (This would integrate with Maps API)');
+        if (typeof google === 'undefined') {
+            alert('Google Maps is not available. Please check your internet connection.');
+            return;
+        }
+        
+        // Get the currently displayed result
+        const resultName = document.getElementById('resultName').textContent;
+        const resultIcon = document.getElementById('resultIcon').textContent;
+        const resultColor = document.getElementById('resultIcon').style.background.replace('20', '');
+        
+        // Find the matching option from our data
+        const currentOptions = getCurrentOptions();
+        const selectedOption = currentOptions.find(option => option.name === resultName);
+        
+        if (selectedOption) {
+            findNearbyRestaurants(selectedOption);
+        }
     });
     
     document.getElementById('spinAgainBtn').addEventListener('click', () => {
@@ -1100,6 +1130,289 @@ document.addEventListener('keydown', (e) => {
         });
     }
 });
+
+// Google Maps Integration
+let map;
+let service;
+let userLocation;
+let currentSelectedOption;
+
+// Initialize Google Maps
+function initMap() {
+    // This function is called by Google Maps API
+    // Initial map setup will be done when user requests nearby restaurants
+    console.log('Google Maps API loaded');
+}
+
+// Cuisine type mapping for Google Places API
+const cuisineTypeMapping = {
+    // Sydney
+    'Asian Fusion': ['chinese_restaurant', 'japanese_restaurant', 'thai_restaurant', 'vietnamese_restaurant', 'asian_restaurant'],
+    'Cafe & Light': ['cafe', 'sandwich_shop', 'meal_takeaway'],
+    'Italian Classics': ['italian_restaurant', 'pizza_restaurant'],
+    'Health Bowls': ['health_food_restaurant', 'vegetarian_restaurant'],
+    'Aussie Local': ['restaurant', 'meal_takeaway'],
+    
+    // Melbourne
+    'Coffee & Brunch': ['cafe', 'bakery'],
+    'Lane Way Gems': ['restaurant', 'meal_takeaway'],
+    'European Deli': ['greek_restaurant', 'german_restaurant', 'european_restaurant'],
+    'Asian Street Food': ['chinese_restaurant', 'korean_restaurant', 'vietnamese_restaurant', 'thai_restaurant'],
+    'Modern Australian': ['fine_dining_restaurant', 'restaurant'],
+    
+    // Brisbane
+    'Tropical Fresh': ['juice_bar', 'health_food_restaurant', 'vegetarian_restaurant'],
+    'Brisbane BBQ': ['barbecue_restaurant', 'restaurant'],
+    'World Flavors': ['indian_restaurant', 'greek_restaurant', 'vietnamese_restaurant', 'middle_eastern_restaurant'],
+    'Riverside Dining': ['seafood_restaurant', 'restaurant'],
+    'Farmers Market': ['organic_store', 'health_food_restaurant', 'vegetarian_restaurant']
+};
+
+async function findNearbyRestaurants(selectedOption) {
+    currentSelectedOption = selectedOption;
+    const mapContainer = document.getElementById('mapContainer');
+    const restaurantList = document.getElementById('restaurantList');
+    
+    // Show map container
+    mapContainer.style.display = 'block';
+    
+    // Show loading state
+    restaurantList.innerHTML = `
+        <div class="loading-restaurants">
+            <div class="loading-icon">🔄</div>
+            <p>Finding nearby restaurants...</p>
+        </div>
+    `;
+    
+    try {
+        // Get user location
+        userLocation = await getUserLocation();
+        
+        // Initialize map
+        initializeMap(userLocation);
+        
+        // Search for restaurants
+        const restaurants = await searchNearbyRestaurants(selectedOption, userLocation);
+        
+        // Display results
+        displayRestaurants(restaurants);
+        
+    } catch (error) {
+        console.error('Error finding restaurants:', error);
+        showLocationError(error.message);
+    }
+}
+
+function getUserLocation() {
+    return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error('Geolocation is not supported by this browser'));
+            return;
+        }
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                resolve({
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                });
+            },
+            (error) => {
+                let message;
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        message = "Location access denied. Please enable location services.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        message = "Location information unavailable.";
+                        break;
+                    case error.TIMEOUT:
+                        message = "Location request timed out.";
+                        break;
+                    default:
+                        message = "An unknown error occurred while getting location.";
+                        break;
+                }
+                reject(new Error(message));
+            },
+            {
+                timeout: 10000,
+                maximumAge: 300000 // 5 minutes
+            }
+        );
+    });
+}
+
+function initializeMap(location) {
+    const mapDiv = document.getElementById('restaurantMap');
+    
+    map = new google.maps.Map(mapDiv, {
+        center: location,
+        zoom: 15,
+        styles: [
+            {
+                "featureType": "poi.business",
+                "stylers": [{"visibility": "on"}]
+            }
+        ]
+    });
+    
+    // Add user location marker
+    new google.maps.Marker({
+        position: location,
+        map: map,
+        title: 'Your Location',
+        icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="8" fill="#4285F4"/>
+                    <circle cx="12" cy="12" r="3" fill="white"/>
+                </svg>
+            `),
+            scaledSize: new google.maps.Size(24, 24)
+        }
+    });
+    
+    service = new google.maps.places.PlacesService(map);
+}
+
+async function searchNearbyRestaurants(selectedOption, location) {
+    const types = cuisineTypeMapping[selectedOption.category] || ['restaurant'];
+    const radius = 2000; // 2km radius
+    
+    return new Promise((resolve, reject) => {
+        const request = {
+            location: location,
+            radius: radius,
+            types: ['restaurant', 'food', 'meal_takeaway'],
+            keyword: types.join(' OR ')
+        };
+        
+        service.nearbySearch(request, (results, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                // Filter and sort results
+                const filteredResults = results
+                    .filter(place => place.rating && place.rating > 3.5) // Only show well-rated places
+                    .slice(0, 10) // Limit to 10 results
+                    .sort((a, b) => b.rating - a.rating); // Sort by rating
+                
+                resolve(filteredResults);
+            } else {
+                reject(new Error('Failed to find nearby restaurants'));
+            }
+        });
+    });
+}
+
+function displayRestaurants(restaurants) {
+    const restaurantList = document.getElementById('restaurantList');
+    
+    if (restaurants.length === 0) {
+        restaurantList.innerHTML = `
+            <div class="loading-restaurants">
+                <div style="font-size: 2rem;">🤷‍♂️</div>
+                <p>No restaurants found nearby. Try expanding your search area.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    restaurantList.innerHTML = restaurants.map(restaurant => {
+        const distance = calculateDistance(userLocation, restaurant.geometry.location);
+        const rating = restaurant.rating || 'N/A';
+        const priceLevel = '💰'.repeat(restaurant.price_level || 1);
+        
+        // Add marker to map
+        const marker = new google.maps.Marker({
+            position: restaurant.geometry.location,
+            map: map,
+            title: restaurant.name,
+            icon: {
+                url: currentSelectedOption.icon ? 
+                    `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="16" cy="16" r="14" fill="${currentSelectedOption.color}" stroke="white" stroke-width="2"/>
+                            <text x="16" y="20" font-size="16" text-anchor="middle" fill="white">${currentSelectedOption.icon}</text>
+                        </svg>
+                    `)}` :
+                    'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                scaledSize: new google.maps.Size(32, 32)
+            }
+        });
+        
+        // Add click listener to marker
+        marker.addListener('click', () => {
+            openInMaps(restaurant);
+        });
+        
+        return `
+            <div class="restaurant-item" onclick="focusOnRestaurant(${restaurant.geometry.location.lat()}, ${restaurant.geometry.location.lng()})">
+                <div class="restaurant-info">
+                    <div class="restaurant-name">${restaurant.name}</div>
+                    <div class="restaurant-details">
+                        <span class="restaurant-rating">⭐ ${rating}</span>
+                        <span class="restaurant-distance">${distance}</span>
+                        <span>${priceLevel}</span>
+                    </div>
+                </div>
+                <div class="restaurant-actions">
+                    <button class="map-btn" onclick="event.stopPropagation(); openInMaps(${JSON.stringify(restaurant).replace(/"/g, '&quot;')})">
+                        Navigate
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function calculateDistance(pos1, pos2) {
+    const lat1 = pos1.lat;
+    const lng1 = pos1.lng;
+    const lat2 = pos2.lat();
+    const lng2 = pos2.lng();
+    
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const d = R * c;
+    
+    return d < 1 ? `${Math.round(d * 1000)}m` : `${d.toFixed(1)}km`;
+}
+
+function focusOnRestaurant(lat, lng) {
+    if (map) {
+        map.setCenter(new google.maps.LatLng(lat, lng));
+        map.setZoom(17);
+    }
+}
+
+function openInMaps(restaurant) {
+    const lat = restaurant.geometry.location.lat();
+    const lng = restaurant.geometry.location.lng();
+    const name = encodeURIComponent(restaurant.name);
+    
+    // Try to open in native maps app first, fall back to Google Maps
+    const mapsUrl = `https://maps.google.com/maps?daddr=${lat},${lng}&q=${name}`;
+    window.open(mapsUrl, '_blank');
+}
+
+function showLocationError(message) {
+    const restaurantList = document.getElementById('restaurantList');
+    restaurantList.innerHTML = `
+        <div class="location-prompt">
+            <div class="location-icon">📍</div>
+            <p><strong>Location Access Required</strong></p>
+            <p>${message}</p>
+            <button class="enable-location-btn" onclick="findNearbyRestaurants(currentSelectedOption)">
+                Try Again
+            </button>
+        </div>
+    `;
+}
 
 // Service Worker for offline functionality (optional)
 if ('serviceWorker' in navigator) {

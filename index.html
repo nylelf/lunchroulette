@@ -6,6 +6,8 @@
     <title>🍽️ Lunch Roulette - Sydney & Melbourne</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Maps API - Replace YOUR_API_KEY with actual key -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap"></script>
 </head>
 <body>
     <div class="container">
@@ -114,6 +116,13 @@
                 <div class="popular-dishes">
                     <h4 data-lang-key="popular-options">Popular Options:</h4>
                     <div class="dishes-grid" id="dishesGrid"></div>
+                </div>
+                <div id="mapContainer" class="map-container" style="display: none;">
+                    <div id="restaurantMap" class="restaurant-map"></div>
+                    <div class="nearby-restaurants" id="nearbyRestaurants">
+                        <h4 data-lang-key="nearby-restaurants">Nearby Restaurants</h4>
+                        <div id="restaurantList" class="restaurant-list"></div>
+                    </div>
                 </div>
                 <div class="modal-actions">
                     <button class="action-btn primary" id="findNearbyBtn">

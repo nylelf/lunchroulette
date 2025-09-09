@@ -760,3 +760,141 @@ body {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+/* Google Maps Integration */
+.map-container {
+    margin: 20px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.restaurant-map {
+    width: 100%;
+    height: 300px;
+    border-radius: 12px 12px 0 0;
+}
+
+.nearby-restaurants {
+    background: #f8f9fa;
+    padding: 15px;
+}
+
+.nearby-restaurants h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1rem;
+}
+
+.restaurant-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.restaurant-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid #ff6b35;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.restaurant-item:hover {
+    background: #fff5f5;
+    transform: translateX(5px);
+}
+
+.restaurant-info {
+    flex: 1;
+}
+
+.restaurant-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.restaurant-details {
+    font-size: 0.85rem;
+    color: #666;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.restaurant-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #ff6b35;
+    font-weight: 500;
+}
+
+.restaurant-distance {
+    color: #888;
+}
+
+.restaurant-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.map-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.map-btn:hover {
+    background: #3367d6;
+}
+
+.loading-restaurants {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+.loading-restaurants .loading-icon {
+    font-size: 2rem;
+    animation: spin 1s linear infinite;
+}
+
+/* Location Permission */
+.location-prompt {
+    text-align: center;
+    padding: 20px;
+    background: #f0f8ff;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.location-prompt .location-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.location-prompt p {
+    margin: 10px 0;
+    color: #555;
+}
+
+.enable-location-btn {
+    background: #4285f4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+}
