@@ -690,35 +690,45 @@ function spinWheel() {
     const segmentAngle = 360 / options.length;
     const spins = 5 + Math.random() * 3; // 5-8 full rotations
     
-    // In the SVG generation, segments start at -90° (top) and go clockwise
-    // Segment index 0 starts at -90° and ends at -90° + segmentAngle
-    // The CENTER of segment at index i is at: -90° + (i * segmentAngle) + (segmentAngle/2)
-    const segmentStartAngle = -90 + selectedIndex * segmentAngle;
-    const segmentCenterAngle = segmentStartAngle + (segmentAngle / 2);
+    // In SVG generation: segments start at -90° (top) and go clockwise
+    // Index 0: starts at -90°, center at -90° + segmentAngle/2  
+    // Index 1: starts at -90° + segmentAngle, center at -90° + segmentAngle + segmentAngle/2
+    // etc.
     
-    // We want the segment center to align with the pointer at the top (0°)
-    // So we need to rotate the wheel so that segmentCenterAngle becomes 0°
-    const targetRotation = -segmentCenterAngle;
+    // The wheel rotates clockwise, but we want the selected segment center to align with pointer at top (0°)
+    // If the user reports seeing the "previous" option, it means we need to adjust our selection
+    
+    const segmentCenterAngle = -90 + selectedIndex * segmentAngle + (segmentAngle / 2);
+    
+    // Since user reports seeing the previous option, let's try reversing the selection
+    // by using the next segment in the sequence
+    const adjustedIndex = (selectedIndex + 1) % options.length;
+    const adjustedSegmentCenterAngle = -90 + adjustedIndex * segmentAngle + (segmentAngle / 2);
+    
+    // Target rotation to bring the adjusted segment center to pointer position (0°)
+    const targetRotation = -adjustedSegmentCenterAngle;
     
     // Add multiple spins for animation effect
     const totalRotation = spins * 360 + targetRotation;
     
-    // Normalize current rotation to 0-360 range
+    // Normalize current rotation to 0-360 range for calculation
     const normalizedCurrentRotation = ((currentState.currentRotation % 360) + 360) % 360;
+    const normalizedTotalRotation = ((totalRotation % 360) + 360) % 360;
     
-    // Calculate the shortest rotation needed
-    let rotationNeeded = totalRotation - normalizedCurrentRotation;
-    
-    // Ensure we rotate at least 360 degrees forward for visual effect
-    if (rotationNeeded < 360) {
+    // Calculate rotation needed - ensure we always go forward (clockwise)
+    let rotationNeeded = normalizedTotalRotation - normalizedCurrentRotation;
+    if (rotationNeeded <= 0) {
         rotationNeeded += 360;
     }
+    
+    // Add the extra spins
+    rotationNeeded += Math.floor(spins) * 360;
     
     const finalRotation = currentState.currentRotation + rotationNeeded;
     
     // Debug logging
-    console.log(`Selected: ${selectedOption.name} (index ${selectedIndex})`);
-    console.log(`Segment center angle: ${segmentCenterAngle}°`);
+    console.log(`Selected: ${selectedOption.name} (original index ${selectedIndex}, adjusted index ${adjustedIndex})`);
+    console.log(`Original segment center: ${segmentCenterAngle}°, Adjusted segment center: ${adjustedSegmentCenterAngle}°`);
     console.log(`Target rotation: ${targetRotation}°`);
     console.log(`Current rotation: ${currentState.currentRotation}°`);
     console.log(`Rotation needed: ${rotationNeeded}°`);
