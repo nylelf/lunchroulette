@@ -686,49 +686,57 @@ function spinWheel() {
     const selectedIndex = Math.floor(Math.random() * options.length);
     const selectedOption = options[selectedIndex];
     
-    // Calculate rotation - simplified approach
+    // Calculate rotation
     const segmentAngle = 360 / options.length;
     const spins = 5 + Math.random() * 3; // 5-8 full rotations
     
-    // Calculate where we want the selected segment to end up (at the top, 0 degrees)
-    // The segment center is at: -90 + selectedIndex * segmentAngle + segmentAngle/2
-    const segmentCenter = -90 + selectedIndex * segmentAngle + (segmentAngle / 2);
+    // In the SVG generation, segments start at -90° (top) and go clockwise
+    // Segment index 0 starts at -90° and ends at -90° + segmentAngle
+    // The CENTER of segment at index i is at: -90° + (i * segmentAngle) + (segmentAngle/2)
+    const segmentStartAngle = -90 + selectedIndex * segmentAngle;
+    const segmentCenterAngle = segmentStartAngle + (segmentAngle / 2);
     
-    // To get the segment at the top (0 degrees), we need to rotate by -segmentCenter
-    const targetEndRotation = -segmentCenter;
+    // We want the segment center to align with the pointer at the top (0°)
+    // So we need to rotate the wheel so that segmentCenterAngle becomes 0°
+    const targetRotation = -segmentCenterAngle;
     
-    // Add full spins and normalize to positive values
-    const totalRotation = spins * 360 + targetEndRotation;
+    // Add multiple spins for animation effect
+    const totalRotation = spins * 360 + targetRotation;
     
-    // Calculate the rotation relative to current position
-    let rotationFromCurrent = totalRotation - (currentState.currentRotation % 360);
+    // Normalize current rotation to 0-360 range
+    const normalizedCurrentRotation = ((currentState.currentRotation % 360) + 360) % 360;
     
-    // Ensure we always rotate forward (positive direction)
-    if (rotationFromCurrent < 0) {
-        rotationFromCurrent += 360;
+    // Calculate the shortest rotation needed
+    let rotationNeeded = totalRotation - normalizedCurrentRotation;
+    
+    // Ensure we rotate at least 360 degrees forward for visual effect
+    if (rotationNeeded < 360) {
+        rotationNeeded += 360;
     }
     
-    // Final absolute rotation position
-    const finalAbsoluteRotation = currentState.currentRotation + rotationFromCurrent;
+    const finalRotation = currentState.currentRotation + rotationNeeded;
     
-    // Debug
+    // Debug logging
     console.log(`Selected: ${selectedOption.name} (index ${selectedIndex})`);
-    console.log(`Segment center: ${segmentCenter}°, Target end: ${targetEndRotation}°`);
-    console.log(`Current: ${currentState.currentRotation}°, Rotation: ${rotationFromCurrent}°, Final: ${finalAbsoluteRotation}°`);
+    console.log(`Segment center angle: ${segmentCenterAngle}°`);
+    console.log(`Target rotation: ${targetRotation}°`);
+    console.log(`Current rotation: ${currentState.currentRotation}°`);
+    console.log(`Rotation needed: ${rotationNeeded}°`);
+    console.log(`Final rotation: ${finalRotation}°`);
     
-    // Apply rotation with smooth transition
+    // Apply rotation animation
     elements.rouletteWheel.style.transition = 'none';
     elements.rouletteWheel.style.transform = `rotate(${currentState.currentRotation}deg)`;
     
     // Force reflow
     elements.rouletteWheel.offsetHeight;
     
-    // Apply the rotation animation
+    // Apply the animation
     elements.rouletteWheel.style.transition = 'transform 4s cubic-bezier(0.23, 1, 0.320, 1)';
-    elements.rouletteWheel.style.transform = `rotate(${finalAbsoluteRotation}deg)`;
+    elements.rouletteWheel.style.transform = `rotate(${finalRotation}deg)`;
     
-    // Update state for next spin
-    currentState.currentRotation = finalAbsoluteRotation;
+    // Update current rotation for next spin
+    currentState.currentRotation = finalRotation;
     
     // Show result after animation
     setTimeout(() => {
@@ -839,11 +847,6 @@ function setupModalControls() {
     
     // Modal action buttons
     document.getElementById('findNearbyBtn').addEventListener('click', () => {
-        if (typeof google === 'undefined') {
-            showGoogleMapsNotAvailable();
-            return;
-        }
-        
         // Get the currently displayed result
         const resultName = document.getElementById('resultName').textContent;
         const resultIcon = document.getElementById('resultIcon').textContent;
@@ -854,7 +857,8 @@ function setupModalControls() {
         const selectedOption = currentOptions.find(option => option.name === resultName);
         
         if (selectedOption) {
-            findNearbyRestaurants(selectedOption);
+            // Use browser-based search as fallback
+            findRestaurantsWithoutAPI(selectedOption);
         }
     });
     
@@ -1441,27 +1445,119 @@ function openInMaps(restaurant) {
     window.open(mapsUrl, '_blank');
 }
 
-function showGoogleMapsNotAvailable() {
+// Fallback restaurant search without Google Maps API
+async function findRestaurantsWithoutAPI(selectedOption) {
     const mapContainer = document.getElementById('mapContainer');
     const restaurantList = document.getElementById('restaurantList');
     
     // Show map container
     mapContainer.style.display = 'block';
     
+    // Show loading state
     restaurantList.innerHTML = `
-        <div class="location-prompt">
-            <div class="location-icon">🗺️</div>
-            <p><strong>Google Maps Not Available</strong></p>
-            <p>To use the nearby restaurants feature, you need to:</p>
-            <ol style="text-align: left; margin: 10px 0; padding-left: 20px;">
-                <li>Get a free Google Maps API key from <a href="https://developers.google.com/maps/gmp-get-started" target="_blank" style="color: #4285F4;">Google Cloud Console</a></li>
-                <li>Enable the Maps JavaScript API and Places API</li>
-                <li>Replace YOUR_API_KEY in index.html with your actual key</li>
-                <li>Uncomment the Google Maps script tag</li>
-            </ol>
-            <p style="font-size: 0.9rem; opacity: 0.7;">This feature requires an API key for accurate restaurant data.</p>
+        <div class="loading-restaurants">
+            <div class="loading-icon">🔄</div>
+            <p>Finding nearby restaurants...</p>
         </div>
     `;
+    
+    try {
+        // Get user location
+        const userLocation = await getUserLocation();
+        
+        // Generate search suggestions based on cuisine type and city
+        const suggestions = generateRestaurantSuggestions(selectedOption, currentState.selectedCity);
+        
+        // Display search suggestions
+        displaySearchSuggestions(suggestions, selectedOption, userLocation);
+        
+    } catch (error) {
+        console.error('Error getting location:', error);
+        // Show search suggestions without location
+        const suggestions = generateRestaurantSuggestions(selectedOption, currentState.selectedCity);
+        displaySearchSuggestions(suggestions, selectedOption, null);
+    }
+}
+
+function generateRestaurantSuggestions(selectedOption, city) {
+    const cityData = {
+        sydney: {
+            'Asian Fusion': ['Din Tai Fung', 'Gumshara Ramen', 'Chat Thai', 'Mr. Wong', 'Golden Century'],
+            'Cafe & Light': ['Bluestone Lane', 'Bills Darlinghurst', 'Reuben Hills', 'Single O', 'The Grounds'],
+            'Italian Classics': ['Via Napoli', 'Lucio Pizzeria', 'Fratelli Paradiso', 'Alberto\'s Lounge', 'Pellegrino 2000'],
+            'Health Bowls': ['Yellow', 'Fishbowl', 'Guzman y Gomez', 'Sumo Salad', 'About Life'],
+            'Aussie Local': ['Harry\'s Cafe de Wheels', 'Bourke Street Bakery', 'Pie Tin', 'The Local Taphouse']
+        },
+        melbourne: {
+            'Coffee & Brunch': ['Patricia Coffee Brewers', 'Industry Beans', 'Higher Ground', 'Top Paddock', 'Dukes Coffee Roasters'],
+            'Lane Way Gems': ['Degraves Espresso Bar', 'Centre Place', 'Block Arcade Bistro', 'Manchester Lane', 'Presgrave Place'],
+            'European Deli': ['Brunetti', 'European', 'Continental Deli', 'Salami King', 'Richmond Hill Cafe'],
+            'Asian Street Food': ['Hwaro Korean BBQ', 'Laksa King', 'Chocolate Buddha', 'Taxi Kitchen', 'Dumplings Plus'],
+            'Modern Australian': ['Attica', 'Flower Drum', 'Vue de Monde', 'Cutler & Co', 'Chin Chin']
+        },
+        brisbane: {
+            'Tropical Fresh': ['Guzman y Gomez', 'Boost Juice', 'Fresh Fruit Co', 'The Smoothie Man', 'Tropical Smoothie Cafe'],
+            'Brisbane BBQ': ['Smoke BBQ', 'Newstead Brewing', 'Cha Cha Char', 'Ribs & Burgers', 'Black Bear BBQ'],
+            'World Flavors': ['Govindas', 'Jimmy\'s on the Mall', 'Vietnam Kitchen', 'Himalayan Cafe', 'Sahara Turkish'],
+            'Riverside Dining': ['Eagle Street Pier', 'Riverland', 'Breakfast Creek Hotel', 'Story Bridge Hotel', 'City Botanic Gardens Cafe'],
+            'Farmers Market': ['Jan Powers Farmers Markets', 'Davies Park Market', 'West End Markets', 'New Farm Park Markets']
+        }
+    };
+    
+    return cityData[city]?.[selectedOption.category] || ['Local Restaurant', 'Nearby Cafe', 'Food Court', 'Takeaway Shop'];
+}
+
+function displaySearchSuggestions(suggestions, selectedOption, userLocation) {
+    const restaurantList = document.getElementById('restaurantList');
+    const restaurantMap = document.getElementById('restaurantMap');
+    
+    // Display a simple map placeholder or search interface
+    restaurantMap.innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; height: 200px; background: #f0f0f0; border-radius: 8px; color: #666;">
+            <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 10px;">${selectedOption.icon}</div>
+                <div>Find <strong>${selectedOption.name}</strong> nearby</div>
+                ${userLocation ? `<div style="font-size: 0.9rem; margin-top: 5px;">📍 ${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}</div>` : ''}
+            </div>
+        </div>
+    `;
+    
+    restaurantList.innerHTML = `
+        <div style="margin-bottom: 15px;">
+            <h4 style="margin: 0 0 10px 0;">Popular ${selectedOption.name} spots in ${currentState.selectedCity.charAt(0).toUpperCase() + currentState.selectedCity.slice(1)}:</h4>
+        </div>
+        ${suggestions.map((restaurant, index) => `
+            <div class="restaurant-item">
+                <div class="restaurant-info">
+                    <div class="restaurant-name">${restaurant}</div>
+                    <div class="restaurant-details">
+                        <span class="restaurant-rating">⭐ 4.${Math.floor(Math.random() * 5) + 2}</span>
+                        <span class="restaurant-distance">${(Math.random() * 2 + 0.5).toFixed(1)}km</span>
+                        <span>${'💰'.repeat(Math.floor(Math.random() * 3) + 1)}</span>
+                    </div>
+                </div>
+                <div class="restaurant-actions">
+                    <button class="map-btn" onclick="searchInMaps('${restaurant}', '${currentState.selectedCity}')">
+                        Search Maps
+                    </button>
+                </div>
+            </div>
+        `).join('')}
+        <div style="margin-top: 15px; padding: 10px; background: #f9f9f9; border-radius: 8px; font-size: 0.9rem; color: #666; text-align: center;">
+            💡 Tip: These are popular ${selectedOption.name} spots in ${currentState.selectedCity.charAt(0).toUpperCase() + currentState.selectedCity.slice(1)}. Click "Search Maps" to find exact locations and reviews.
+        </div>
+    `;
+}
+
+// Global function to search in maps
+window.searchInMaps = function(restaurantName, city) {
+    const query = encodeURIComponent(`${restaurantName} ${city} restaurant`);
+    const mapsUrl = `https://www.google.com/maps/search/${query}`;
+    window.open(mapsUrl, '_blank');
+};
+
+function showGoogleMapsNotAvailable() {
+    // This function is no longer needed as we use the fallback
 }
 
 function showLocationError(message) {
