@@ -898,3 +898,166 @@ body {
     cursor: pointer;
     font-weight: 500;
 }
+
+/* Clickable Dish Items */
+.dish-item.clickable-dish {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    border: 2px solid transparent;
+}
+
+.dish-item.clickable-dish:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-color: #ff6b35;
+    background: linear-gradient(135deg, #fff, #f8f9fa);
+}
+
+.dish-item.clickable-dish .click-hint {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    color: #ff6b35;
+}
+
+.dish-item.clickable-dish:hover .click-hint {
+    opacity: 1;
+}
+
+/* Restaurant Suggestions */
+.restaurant-suggestions {
+    margin: 20px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    border: 2px solid #ff6b35;
+    animation: slideInUp 0.3s ease;
+}
+
+.suggestion-header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.suggestion-header h4 {
+    color: #333;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.suggestion-header p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.restaurant-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.restaurant-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.restaurant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    border-color: #ff6b35;
+}
+
+.restaurant-rank {
+    background: linear-gradient(135deg, #ff6b35, #ff8a00);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.restaurant-info {
+    flex: 1;
+}
+
+.restaurant-name {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.restaurant-details {
+    display: flex;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.restaurant-specialty {
+    font-size: 0.8rem;
+    color: #ff6b35;
+    font-style: italic;
+}
+
+.restaurant-action {
+    font-size: 1.2rem;
+    color: #ff6b35;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.restaurant-card:hover .restaurant-action {
+    opacity: 1;
+}
+
+.suggestion-footer {
+    text-align: center;
+    margin-top: 15px;
+    color: #666;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Additional styles for restaurant location */
+.restaurant-location {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+/* Loading spinner animation */
+.loading-spinner {
+    font-size: 1.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

@@ -34,6 +34,7 @@ const translations = {
         'this-month': 'This Month',
         'no-lunch-decisions': 'No lunch decisions yet!',
         'spin-to-start': 'Spin the wheel to start building your history',
+        'under8': 'Under $8',
         'budget': 'Budget ($8-15)',
         'medium': 'Medium ($12-22)',
         'premium': 'Premium ($20-35)',
@@ -80,6 +81,7 @@ const translations = {
         'this-month': '本月',
         'no-lunch-decisions': '尚无午餐决定！',
         'spin-to-start': '转动轮盘开始建立您的历史记录',
+        'under8': '8美元以下',
         'budget': '经济型 ($8-15)',
         'medium': '中等 ($12-22)',
         'premium': '高端 ($20-35)',
@@ -262,6 +264,8 @@ const lunchOptions = {
             name: "Asian Cuisine",
             description: "Chinese, Japanese, Thai, Vietnamese flavors",
             priceRange: "$12-18",
+            priceMin: 12,
+            priceMax: 18,
             color: "#FF6B6B",
             popularDishes: ["Ramen", "Pho", "Dumplings", "Pad Thai", "Sushi"],
             dietaryOptions: ["vegetarian", "vegan", "glutenFree"]
@@ -273,9 +277,24 @@ const lunchOptions = {
             name: "Cafe Food", 
             description: "Fresh sandwiches, wraps, salads & coffee",
             priceRange: "$10-16",
+            priceMin: 10,
+            priceMax: 16,
             color: "#4ECDC4",
             popularDishes: ["Club Sandwich", "Caesar Salad", "Avocado Toast", "Wrap"],
             dietaryOptions: ["vegetarian", "vegan", "glutenFree"]
+        },
+        {
+            id: 2.1,
+            category: "Budget Bites",
+            icon: "🍞",
+            name: "Quick & Cheap", 
+            description: "Affordable grab-and-go options",
+            priceRange: "$5-8",
+            priceMin: 5,
+            priceMax: 8,
+            color: "#FFA500",
+            popularDishes: ["Sausage Roll", "Meat Pie", "Sandwich", "Hot Dog"],
+            dietaryOptions: ["halal"]
         },
         {
             id: 3,
@@ -284,6 +303,8 @@ const lunchOptions = {
             name: "Italian Classics",
             description: "Pizza, pasta, and authentic Italian",
             priceRange: "$15-22",
+            priceMin: 15,
+            priceMax: 22,
             color: "#FFE66D",
             popularDishes: ["Margherita Pizza", "Carbonara", "Risotto", "Bruschetta"],
             dietaryOptions: ["vegetarian"]
@@ -295,6 +316,8 @@ const lunchOptions = {
             name: "Health Bowls",
             description: "Poke, acai, quinoa & fresh ingredients", 
             priceRange: "$14-20",
+            priceMin: 14,
+            priceMax: 20,
             color: "#95E1D3",
             popularDishes: ["Poke Bowl", "Quinoa Salad", "Smoothie Bowl", "Buddha Bowl"],
             dietaryOptions: ["vegetarian", "vegan", "glutenFree"]
@@ -306,6 +329,8 @@ const lunchOptions = {
             name: "Aussie Favorites",
             description: "Meat pies, BBQ, fish & chips",
             priceRange: "$12-25",
+            priceMin: 12,
+            priceMax: 25,
             color: "#F38BA8",
             popularDishes: ["Meat Pie", "Fish & Chips", "BBQ Burger", "Lamington"],
             dietaryOptions: ["halal"]
@@ -319,6 +344,8 @@ const lunchOptions = {
             name: "Melbourne Coffee",
             description: "World-class coffee culture & brunch",
             priceRange: "$12-20",
+            priceMin: 12,
+            priceMax: 20,
             color: "#8B4513",
             popularDishes: ["Flat White", "Smashed Avo", "Big Breakfast", "French Toast"],
             dietaryOptions: ["vegetarian", "vegan", "glutenFree"]
@@ -330,6 +357,8 @@ const lunchOptions = {
             name: "Hidden Lanes",
             description: "Unique finds in Melbourne's famous lanes",
             priceRange: "$15-25",
+            priceMin: 15,
+            priceMax: 25,
             color: "#9B59B6",
             popularDishes: ["Gourmet Burgers", "Artisan Pizza", "Craft Sandwiches"],
             dietaryOptions: ["vegetarian", "vegan"]
@@ -340,7 +369,9 @@ const lunchOptions = {
             icon: "🧀",
             name: "European Style",
             description: "Greek, Italian, German influences",
-            priceRange: "$14-22", 
+            priceRange: "$14-22",
+            priceMin: 14,
+            priceMax: 22,
             color: "#3498DB",
             popularDishes: ["Souvlaki", "Schnitzel", "Antipasto", "Gelato"],
             dietaryOptions: ["vegetarian", "halal"]
@@ -352,9 +383,24 @@ const lunchOptions = {
             name: "Street Food",
             description: "Authentic Asian street food experience",
             priceRange: "$10-16",
+            priceMin: 10,
+            priceMax: 16,
             color: "#E74C3C",
             popularDishes: ["Laksa", "Banh Mi", "Dim Sum", "Korean BBQ"],
             dietaryOptions: ["vegetarian", "vegan", "halal"]
+        },
+        {
+            id: 9.1,
+            category: "Food Court",
+            icon: "🍱",
+            name: "Mall Food",
+            description: "Quick and affordable food court options",
+            priceRange: "$6-8",
+            priceMin: 6,
+            priceMax: 8,
+            color: "#FF8C00",
+            popularDishes: ["Fried Rice", "Noodle Box", "Burger", "Pizza Slice"],
+            dietaryOptions: ["vegetarian", "halal"]
         },
         {
             id: 10,
@@ -363,6 +409,8 @@ const lunchOptions = {
             name: "Mod Oz",
             description: "Contemporary Australian cuisine",
             priceRange: "$18-28",
+            priceMin: 18,
+            priceMax: 28,
             color: "#27AE60",
             popularDishes: ["Kangaroo Steak", "Barramundi", "Native Herbs", "Pavlova"],
             dietaryOptions: ["glutenFree"]
@@ -376,6 +424,8 @@ const lunchOptions = {
             name: "Tropical Fresh",
             description: "Fresh tropical fruits, smoothies & light meals",
             priceRange: "$10-18",
+            priceMin: 10,
+            priceMax: 18,
             color: "#FF9F40",
             popularDishes: ["Mango Smoothie Bowl", "Tropical Salad", "Coconut Rice", "Fresh Spring Rolls"],
             dietaryOptions: ["vegetarian", "vegan", "glutenFree"]
@@ -387,6 +437,8 @@ const lunchOptions = {
             name: "Brisbane BBQ",
             description: "Queensland-style barbecue & grilled specialties",
             priceRange: "$15-25",
+            priceMin: 15,
+            priceMax: 25,
             color: "#8B4513",
             popularDishes: ["Beef Brisket", "Pulled Pork", "Grilled Barramundi", "BBQ Prawns"],
             dietaryOptions: ["glutenFree"]
@@ -398,6 +450,8 @@ const lunchOptions = {
             name: "World Flavors",
             description: "Diverse cultural cuisines from Brisbane's communities",
             priceRange: "$12-20",
+            priceMin: 12,
+            priceMax: 20,
             color: "#20B2AA",
             popularDishes: ["Indian Curry", "Greek Gyros", "Vietnamese Pho", "Lebanese Wrap"],
             dietaryOptions: ["vegetarian", "vegan", "glutenFree", "halal"]
@@ -409,6 +463,8 @@ const lunchOptions = {
             name: "Riverside Dining",
             description: "Casual riverside cafés with city views",
             priceRange: "$14-22",
+            priceMin: 14,
+            priceMax: 22,
             color: "#4682B4",
             popularDishes: ["Fish & Chips", "River Prawns", "Beef Burger", "Caesar Salad"],
             dietaryOptions: ["vegetarian", "glutenFree"]
@@ -420,9 +476,24 @@ const lunchOptions = {
             name: "Farmers Market",
             description: "Fresh local produce & artisan foods",
             priceRange: "$8-16",
+            priceMin: 8,
+            priceMax: 16,
             color: "#32CD32",
             popularDishes: ["Organic Salads", "Fresh Juice", "Artisan Bread", "Local Cheese"],
             dietaryOptions: ["vegetarian", "vegan", "glutenFree"]
+        },
+        {
+            id: 15.1,
+            category: "Student Special",
+            icon: "🎓",
+            name: "Uni Deals",
+            description: "Budget-friendly options near campuses",
+            priceRange: "$4-7",
+            priceMin: 4,
+            priceMax: 7,
+            color: "#9966CC",
+            popularDishes: ["Ramen Cup", "Toasted Sandwich", "Mini Pizza", "Fried Rice"],
+            dietaryOptions: ["vegetarian", "vegan"]
         }
     ]
 };
@@ -466,13 +537,6 @@ function initializeApp() {
     const savedSettings = JSON.parse(localStorage.getItem('lunchSettings') || '{}');
     currentState.settings = { ...currentState.settings, ...savedSettings };
     
-    // Load saved city selection
-    const savedCity = localStorage.getItem('selectedCity') || 'sydney';
-    currentState.selectedCity = savedCity;
-    
-    // Set initial city
-    updateCity(currentState.selectedCity);
-    
     // Initialize language
     updateLanguage(currentState.currentLanguage);
     
@@ -482,18 +546,147 @@ function initializeApp() {
     
     // Load settings into UI
     loadSettingsToUI();
+    
+    // Initialize GPS location service
+    initializeGPSService();
 }
 
-function setupEventListeners() {
-    // City selection
-    elements.citySelect.addEventListener('change', (e) => {
-        const city = e.target.value;
-        updateCity(city);
-    });
+async function initializeGPSService() {
+    console.log('🎯 Initializing GPS location service...');
     
+    // Set up location refresh button
+    const refreshBtn = document.getElementById('locationRefresh');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', refreshGPSLocation);
+    }
+    
+    // Check permissions first
+    const hasPermission = await checkLocationPermission();
+    if (!hasPermission) {
+        console.warn('⚠️ No location permission, showing manual selection');
+        showManualLocationFallback();
+        return;
+    }
+    
+    // Show initial detecting state
+    gpsService.updateLocationDisplay();
+    
+    // Try to get initial location
+    try {
+        console.log('Requesting GPS location...');
+        const locationInfo = await gpsService.getCurrentLocation();
+        console.log('✅ GPS location service initialized successfully:', locationInfo);
+        
+        // Start watching location changes after successful initial location
+        setTimeout(() => {
+            gpsService.startWatching();
+        }, 1000);
+        
+    } catch (error) {
+        console.warn('⚠️ GPS location failed:', error.message);
+        
+        // Show manual location fallback after GPS failure
+        setTimeout(() => {
+            showManualLocationFallback();
+        }, 2000);
+        
+        // Show user-friendly message for common issues
+        let friendlyMessage = error.message;
+        if (error.message.includes('denied')) {
+            friendlyMessage = 'Location access denied. Using manual selection below.';
+        } else if (error.message.includes('timeout')) {
+            friendlyMessage = 'GPS timeout. Using manual selection below.';
+        } else if (error.message.includes('unavailable')) {
+            friendlyMessage = 'GPS unavailable. Using manual selection below.';
+        }
+        
+        gpsService.updateLocationDisplay(new Error(friendlyMessage));
+    }
+}
+
+// Check location permission
+async function checkLocationPermission() {
+    if (!navigator.geolocation) {
+        return false;
+    }
+    
+    if (navigator.permissions) {
+        try {
+            const permission = await navigator.permissions.query({ name: 'geolocation' });
+            return permission.state !== 'denied';
+        } catch (error) {
+            console.warn('Could not check permissions:', error);
+            return true; // Assume permission is available if we can't check
+        }
+    }
+    
+    return true;
+}
+
+// Show manual location fallback
+function showManualLocationFallback() {
+    const locationDisplay = document.getElementById('locationDisplay');
+    if (!locationDisplay) return;
+    
+    // Replace location display with manual selection
+    locationDisplay.innerHTML = `
+        <span class="settings-icon">📍</span>
+        <select id="manualLocationSelect" class="settings-select" onchange="handleManualLocationChange()">
+            <option value="">Select your location...</option>
+            <option value="sydney">🏛️ Sydney</option>
+            <option value="melbourne">🎨 Melbourne</option>
+            <option value="brisbane">🌴 Brisbane</option>
+            <option value="perth">🏖️ Perth</option>
+            <option value="adelaide">🍷 Adelaide</option>
+        </select>
+    `;
+}
+
+// Handle manual location selection
+window.handleManualLocationChange = function() {
+    const select = document.getElementById('manualLocationSelect');
+    if (!select) return;
+    
+    const selectedLocation = select.value;
+    if (!selectedLocation) return;
+    
+    const locations = {
+        sydney: { lat: -33.8688, lng: 151.2093, name: 'Sydney', accuracy: 5000 },
+        melbourne: { lat: -37.8136, lng: 144.9631, name: 'Melbourne', accuracy: 5000 },
+        brisbane: { lat: -27.4698, lng: 153.0251, name: 'Brisbane', accuracy: 5000 },
+        perth: { lat: -31.9505, lng: 115.8605, name: 'Perth', accuracy: 5000 },
+        adelaide: { lat: -34.9285, lng: 138.6007, name: 'Adelaide', accuracy: 5000 }
+    };
+    
+    const location = locations[selectedLocation];
+    if (location) {
+        console.log(`📍 Using manual location: ${location.name}`);
+        
+        // Set GPS service location manually
+        gpsService.userLocation = {
+            lat: location.lat,
+            lng: location.lng,
+            accuracy: location.accuracy,
+            timestamp: Date.now()
+        };
+        
+        // Update display
+        const locationText = document.createElement('span');
+        locationText.textContent = `${location.name} (Manual)`;
+        locationText.style.color = '#28a745';
+        
+        const icon = document.querySelector('#locationDisplay .settings-icon');
+        if (icon) icon.textContent = '📍';
+        
+        console.log('✅ Manual location set successfully');
+    }
+};
+
+function setupEventListeners() {
     // Price range
     elements.priceSelect.addEventListener('change', (e) => {
         currentState.priceRange = e.target.value;
+        generateRoulette(); // Regenerate wheel with filtered options
         updateOptionsDisplay();
     });
     
@@ -623,6 +816,24 @@ function createSegmentPath(options) {
 function getCurrentOptions() {
     let options = [...lunchOptions[currentState.selectedCity]];
     
+    // Apply price range filter
+    if (currentState.priceRange && currentState.priceRange !== 'all') {
+        const priceRanges = {
+            'under8': { min: 0, max: 8 },
+            'budget': { min: 8, max: 15 },
+            'medium': { min: 12, max: 22 },
+            'premium': { min: 20, max: 35 }
+        };
+        
+        const selectedRange = priceRanges[currentState.priceRange];
+        if (selectedRange) {
+            options = options.filter(option => {
+                // Check if the option's price range overlaps with the selected budget
+                return (option.priceMax >= selectedRange.min && option.priceMin <= selectedRange.max);
+            });
+        }
+    }
+    
     // Apply dietary filters
     if (currentState.dietaryRestrictions.length > 0) {
         options = options.filter(option => {
@@ -647,20 +858,20 @@ function getCurrentOptions() {
         }
     }
     
-    // Ensure we have exactly 5 options
-    if (options.length > 5) {
-        options = options.slice(0, 5);
-    } else if (options.length < 5) {
+    // Ensure we have exactly 4 options for better rotation calculation
+    if (options.length > 4) {
+        options = options.slice(0, 4);
+    } else if (options.length < 4) {
         // Fill with remaining options if needed
         const allOptions = lunchOptions[currentState.selectedCity];
-        const missing = 5 - options.length;
+        const missing = 4 - options.length;
         const additional = allOptions
             .filter(opt => !options.find(o => o.id === opt.id))
             .slice(0, missing);
         options = [...options, ...additional];
     }
     
-    return options.slice(0, 5);
+    return options.slice(0, 4);
 }
 
 function updateOptionsDisplay() {
@@ -683,44 +894,46 @@ function spinWheel() {
     elements.spinButton.classList.add('spinning');
     
     const options = getCurrentOptions();
-    const selectedIndex = Math.floor(Math.random() * options.length);
-    const selectedOption = options[selectedIndex];
-    
-    // Calculate rotation
     const segmentAngle = 360 / options.length;
     const spins = 5 + Math.random() * 3; // 5-8 full rotations
     
-    // The pointer is at the top (12 o'clock position)
-    // Segments are drawn starting from -90° (top) and go clockwise
-    // Segment 0 center: -90° + segmentAngle/2
-    // Segment 1 center: -90° + segmentAngle + segmentAngle/2
-    // etc.
+    // NEW APPROACH: Generate random rotation, then determine which segment the pointer hits
+    // Generate a random final position (0-360 degrees)
+    const randomEndPosition = Math.random() * 360;
     
-    // Calculate where the selected segment center currently is (relative to 0° = right side)
-    // In our SVG: segment 0 starts at -90°, so its center is at -90° + segmentAngle/2
-    const segmentCenterAngle = -90 + selectedIndex * segmentAngle + (segmentAngle / 2);
+    // Calculate total rotation needed from current position
+    const totalRotationDelta = spins * 360 + randomEndPosition;
+    const finalRotation = currentState.currentRotation + totalRotationDelta;
     
-    // The pointer is at -90° (top). To align the segment center with the pointer:
-    // We need to rotate by the negative of the segment center angle
-    const targetRotation = -segmentCenterAngle;
+    // Now calculate which segment the pointer will point to after this rotation
+    // The pointer is at the top (0° relative position)
+    // After rotation, the wheel's effective position relative to the pointer
+    const wheelFinalPosition = (finalRotation % 360 + 360) % 360;
     
-    // Add multiple spins for animation effect
-    const totalRotation = spins * 360 + targetRotation;
+    // Calculate which segment the pointer hits
+    // Segments start at 0° (top) and go clockwise
+    // Segment 0: 0° to segmentAngle
+    // Segment 1: segmentAngle to 2*segmentAngle, etc.
     
-    // Calculate the final rotation needed
-    // We want to go from current rotation to the target rotation with extra spins
-    const finalRotation = currentState.currentRotation + totalRotation;
+    // But we need to account for the wheel rotation direction
+    // When wheel rotates clockwise, it appears to pointer that segments moved counter-clockwise
+    const pointerRelativePosition = (360 - wheelFinalPosition) % 360;
+    const selectedIndex = Math.floor(pointerRelativePosition / segmentAngle) % options.length;
+    const selectedOption = options[selectedIndex];
     
     // Debug logging
-    console.log(`=== SPIN DEBUG ===`);
-    console.log(`Selected: ${selectedOption.name} (index ${selectedIndex})`);
+    console.log(`=== SPIN DEBUG (NEW APPROACH) ===`);
+    console.log(`Random end position: ${randomEndPosition.toFixed(1)}°`);
+    console.log(`Total rotation delta: ${totalRotationDelta.toFixed(1)}°`);
+    console.log(`Current rotation: ${currentState.currentRotation.toFixed(1)}°`);
+    console.log(`Final rotation: ${finalRotation.toFixed(1)}°`);
+    console.log(`Wheel final position: ${wheelFinalPosition.toFixed(1)}°`);
+    console.log(`Pointer relative position: ${pointerRelativePosition.toFixed(1)}°`);
     console.log(`Segment angle: ${segmentAngle}° (${options.length} segments)`);
-    console.log(`Segment center angle: ${segmentCenterAngle}°`);
-    console.log(`Target rotation: ${targetRotation}°`);
-    console.log(`Current rotation: ${currentState.currentRotation}°`);
-    console.log(`Total rotation with spins: ${totalRotation}°`);
-    console.log(`Final rotation: ${finalRotation}°`);
-    console.log(`==================`);
+    console.log(`Calculated segment index: ${selectedIndex}`);
+    console.log(`Selected option: ${selectedOption.name}`);
+    console.log(`Segment range: ${selectedIndex * segmentAngle}° - ${(selectedIndex + 1) * segmentAngle}°`);
+    console.log(`===============================`);
     
     // Apply rotation animation
     elements.rouletteWheel.style.transition = 'none';
@@ -770,10 +983,13 @@ function showResult(option) {
         return icons[diet] || '';
     }).join(' ');
     
-    // Popular dishes
+    // Popular dishes - make them clickable with nearby search
     const dishesGrid = document.getElementById('dishesGrid');
     dishesGrid.innerHTML = option.popularDishes.slice(0, 4).map(dish => 
-        `<div class="dish-item">${dish}</div>`
+        `<div class="dish-item clickable-dish" data-dish="${dish}" onclick="showTop3RestaurantsNearby('${dish}', '${option.category}')">
+            ${dish}
+            <span class="click-hint">📍</span>
+        </div>`
     ).join('');
     
     // Show modal
@@ -828,6 +1044,8 @@ function setupModalControls() {
     // Close buttons
     document.querySelectorAll('.close-btn').forEach(btn => {
         btn.addEventListener('click', () => {
+            // Reset find nearby results when closing modals
+            resetFindNearbyResults();
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.classList.remove('show');
             });
@@ -843,24 +1061,11 @@ function setupModalControls() {
         });
     });
     
-    // Modal action buttons
-    document.getElementById('findNearbyBtn').addEventListener('click', () => {
-        // Get the currently displayed result
-        const resultName = document.getElementById('resultName').textContent;
-        const resultIcon = document.getElementById('resultIcon').textContent;
-        const resultColor = document.getElementById('resultIcon').style.background.replace('20', '');
-        
-        // Find the matching option from our data
-        const currentOptions = getCurrentOptions();
-        const selectedOption = currentOptions.find(option => option.name === resultName);
-        
-        if (selectedOption) {
-            // Always use the improved browser-based search (no API key required)
-            findRestaurantsWithoutAPI(selectedOption);
-        }
-    });
+    // Popular dishes are now clickable (no separate find nearby button needed)
     
     document.getElementById('spinAgainBtn').addEventListener('click', () => {
+        // Reset find nearby results
+        resetFindNearbyResults();
         elements.resultModal.classList.remove('show');
         setTimeout(spinWheel, 500);
     });
@@ -1570,6 +1775,1941 @@ function displaySearchSuggestions(suggestions, selectedOption, userLocation) {
             </div>
         </div>
     `;
+}
+
+// Function to reset find nearby results
+function resetFindNearbyResults() {
+    const mapContainer = document.getElementById('mapContainer');
+    const suggestionContainer = document.getElementById('restaurantSuggestions');
+    
+    if (mapContainer) {
+        mapContainer.style.display = 'none';
+    }
+    
+    if (suggestionContainer) {
+        suggestionContainer.remove();
+    }
+}
+
+// Enhanced Multi-API Restaurant Data Service
+class RestaurantAPIService {
+    constructor() {
+        // API configurations with enhanced settings
+        this.apis = {
+            yelp: {
+                name: 'Yelp',
+                dailyLimit: 500,
+                used: parseInt(localStorage.getItem('yelp_used_' + this.getDateKey()) || '0'),
+                endpoint: 'https://api.yelp.com/v3/businesses/search',
+                key: 'YOUR_YELP_API_KEY', // Replace with actual key
+                enabled: false, // Enable when you have API key
+                timeout: 8000,
+                retryCount: 0,
+                maxRetries: 2,
+                priority: 1, // Higher number = higher priority
+                lastError: null,
+                consecutiveFailures: 0,
+                healthStatus: 'unknown' // unknown, healthy, degraded, unhealthy
+            },
+            google: {
+                name: 'Google Places',
+                dailyLimit: 1000,
+                used: parseInt(localStorage.getItem('google_used_' + this.getDateKey()) || '0'),
+                endpoint: 'https://maps.googleapis.com/maps/api/place/textsearch/json',
+                key: 'YOUR_GOOGLE_API_KEY', // Replace with actual key
+                enabled: false, // Enable when you have API key
+                timeout: 10000,
+                retryCount: 0,
+                maxRetries: 3,
+                priority: 2,
+                lastError: null,
+                consecutiveFailures: 0,
+                healthStatus: 'unknown'
+            },
+            foursquare: {
+                name: 'Foursquare',
+                dailyLimit: 1000,
+                used: parseInt(localStorage.getItem('foursquare_used_' + this.getDateKey()) || '0'),
+                endpoint: 'https://api.foursquare.com/v3/places/search',
+                key: 'YOUR_FOURSQUARE_API_KEY', // Replace with actual key
+                enabled: false, // Enable when you have API key
+                timeout: 7000,
+                retryCount: 0,
+                maxRetries: 2,
+                priority: 3,
+                lastError: null,
+                consecutiveFailures: 0,
+                healthStatus: 'unknown'
+            },
+            // Add new APIs easily
+            zomato: {
+                name: 'Zomato',
+                dailyLimit: 1000,
+                used: parseInt(localStorage.getItem('zomato_used_' + this.getDateKey()) || '0'),
+                endpoint: 'https://developers.zomato.com/api/v2.1/search',
+                key: 'YOUR_ZOMATO_API_KEY',
+                enabled: false,
+                timeout: 6000,
+                retryCount: 0,
+                maxRetries: 2,
+                priority: 4,
+                lastError: null,
+                consecutiveFailures: 0,
+                healthStatus: 'unknown'
+            }
+        };
+        
+        // Enhanced cache system
+        this.cache = new Map();
+        this.cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours
+        this.shortCache = new Map(); // For failed requests (shorter expiry)
+        this.shortCacheExpiry = 5 * 60 * 1000; // 5 minutes
+        
+        // Circuit breaker settings
+        this.circuitBreaker = {
+            failureThreshold: 5, // API marked unhealthy after 5 consecutive failures
+            recoveryTimeout: 15 * 60 * 1000, // 15 minutes before retry unhealthy API
+            halfOpenRetries: 1 // Number of retries when half-open
+        };
+        
+        // Performance monitoring
+        this.metrics = {
+            totalRequests: 0,
+            successfulRequests: 0,
+            cachedRequests: 0,
+            fallbackRequests: 0,
+            averageResponseTime: 0,
+            apiUsageStats: {}
+        };
+        
+        // Initialize health check
+        this.performPeriodicHealthCheck();
+    }
+    
+    getDateKey() {
+        return new Date().toISOString().split('T')[0];
+    }
+    
+    // Enhanced API selection with health status and priority
+    getAvailableAPIs() {
+        const now = Date.now();
+        return Object.entries(this.apis)
+            .filter(([key, api]) => {
+                // Basic availability checks
+                if (!api.enabled || api.used >= api.dailyLimit) return false;
+                
+                // Circuit breaker logic
+                if (api.healthStatus === 'unhealthy') {
+                    // Check if recovery timeout has passed
+                    if (api.lastFailureTime && (now - api.lastFailureTime) < this.circuitBreaker.recoveryTimeout) {
+                        return false;
+                    }
+                    // Mark as half-open for testing
+                    api.healthStatus = 'half-open';
+                }
+                
+                return true;
+            })
+            .sort(([, a], [, b]) => {
+                // Primary sort: Health status (healthy > half-open > degraded)
+                const healthScore = { healthy: 3, half_open: 2, degraded: 1, unknown: 0.5 };
+                const healthDiff = (healthScore[b.healthStatus] || 0) - (healthScore[a.healthStatus] || 0);
+                if (healthDiff !== 0) return healthDiff;
+                
+                // Secondary sort: Priority (higher is better)
+                const priorityDiff = b.priority - a.priority;
+                if (priorityDiff !== 0) return priorityDiff;
+                
+                // Tertiary sort: Remaining quota
+                return (b.dailyLimit - b.used) - (a.dailyLimit - a.used);
+            });
+    }
+    
+    // Health check for APIs
+    async performHealthCheck(apiName) {
+        const api = this.apis[apiName];
+        if (!api || !api.enabled) return false;
+        
+        try {
+            const startTime = Date.now();
+            // Simple health check with lightweight request
+            const result = await this.callAPIWithTimeout(apiName, 'test', 'sydney', true);
+            const responseTime = Date.now() - startTime;
+            
+            // Update health status based on response time and success
+            if (result.success) {
+                api.consecutiveFailures = 0;
+                api.healthStatus = responseTime < 3000 ? 'healthy' : 'degraded';
+                return true;
+            } else {
+                this.handleAPIFailure(apiName, new Error('Health check failed'));
+                return false;
+            }
+        } catch (error) {
+            this.handleAPIFailure(apiName, error);
+            return false;
+        }
+    }
+    
+    // Periodic health check for all APIs
+    performPeriodicHealthCheck() {
+        // Initial check
+        setTimeout(() => {
+            Object.keys(this.apis).forEach(apiName => {
+                if (this.apis[apiName].enabled) {
+                    this.performHealthCheck(apiName);
+                }
+            });
+        }, 5000); // 5 second delay for initial load
+        
+        // Periodic checks every 10 minutes
+        setInterval(() => {
+            Object.keys(this.apis).forEach(apiName => {
+                if (this.apis[apiName].enabled && this.apis[apiName].healthStatus !== 'unhealthy') {
+                    this.performHealthCheck(apiName);
+                }
+            });
+        }, 10 * 60 * 1000);
+    }
+    
+    // Handle API failures with circuit breaker logic
+    handleAPIFailure(apiName, error) {
+        const api = this.apis[apiName];
+        api.consecutiveFailures++;
+        api.lastError = error.message;
+        api.lastFailureTime = Date.now();
+        
+        if (api.consecutiveFailures >= this.circuitBreaker.failureThreshold) {
+            api.healthStatus = 'unhealthy';
+            console.warn(`API ${apiName} marked as unhealthy after ${api.consecutiveFailures} consecutive failures`);
+        } else {
+            api.healthStatus = 'degraded';
+        }
+    }
+    
+    // Enhanced API call with timeout and retry logic
+    async callAPIWithTimeout(apiName, dish, city, isHealthCheck = false) {
+        const api = this.apis[apiName];
+        let retryCount = 0;
+        
+        while (retryCount <= api.maxRetries) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), api.timeout);
+                
+                const startTime = Date.now();
+                const response = await this.callAPIImplementation(apiName, dish, city, controller.signal, isHealthCheck);
+                const responseTime = Date.now() - startTime;
+                
+                clearTimeout(timeoutId);
+                
+                // Update metrics
+                if (!isHealthCheck) {
+                    this.updateMetrics(apiName, responseTime, true);
+                }
+                
+                // Success - reset failure count
+                api.consecutiveFailures = 0;
+                if (api.healthStatus !== 'healthy') {
+                    api.healthStatus = 'healthy';
+                }
+                
+                return response;
+                
+            } catch (error) {
+                retryCount++;
+                
+                if (retryCount <= api.maxRetries) {
+                    // Exponential backoff
+                    const delay = Math.min(1000 * Math.pow(2, retryCount - 1), 5000);
+                    console.log(`Retrying ${apiName} in ${delay}ms (attempt ${retryCount}/${api.maxRetries})`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    continue;
+                }
+                
+                // All retries exhausted
+                if (!isHealthCheck) {
+                    this.handleAPIFailure(apiName, error);
+                    this.updateMetrics(apiName, 0, false);
+                }
+                throw error;
+            }
+        }
+    }
+    
+    // Update API usage
+    updateUsage(apiName) {
+        const dateKey = this.getDateKey();
+        this.apis[apiName].used++;
+        localStorage.setItem(`${apiName}_used_${dateKey}`, this.apis[apiName].used.toString());
+    }
+    
+    // Enhanced cache management
+    getCacheKey(dish, city) {
+        return `${dish}_${city}`.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    }
+    
+    isValidCache(cacheData, expiry = this.cacheExpiry) {
+        return cacheData && (Date.now() - cacheData.timestamp) < expiry;
+    }
+    
+    // Multi-tier cache check
+    getCachedData(cacheKey) {
+        // Check main cache first
+        const mainCache = this.cache.get(cacheKey);
+        if (this.isValidCache(mainCache)) {
+            this.metrics.cachedRequests++;
+            return { data: mainCache.data, source: 'cache', tier: 'main' };
+        }
+        
+        // Check short-term cache for recent failures
+        const shortCache = this.shortCache.get(cacheKey);
+        if (this.isValidCache(shortCache, this.shortCacheExpiry)) {
+            return { data: shortCache.data, source: 'cache', tier: 'short' };
+        }
+        
+        return null;
+    }
+    
+    // Store data in appropriate cache tier
+    setCachedData(cacheKey, data, isError = false) {
+        const cacheEntry = {
+            data: data,
+            timestamp: Date.now(),
+            hits: 1
+        };
+        
+        if (isError) {
+            this.shortCache.set(cacheKey, cacheEntry);
+        } else {
+            this.cache.set(cacheKey, cacheEntry);
+        }
+        
+        // Cleanup old cache entries periodically
+        this.cleanupCache();
+    }
+    
+    // Cache cleanup to prevent memory leaks
+    cleanupCache() {
+        if (Math.random() < 0.1) { // 10% chance to run cleanup
+            const now = Date.now();
+            
+            // Clean main cache
+            for (const [key, value] of this.cache.entries()) {
+                if ((now - value.timestamp) > this.cacheExpiry) {
+                    this.cache.delete(key);
+                }
+            }
+            
+            // Clean short cache
+            for (const [key, value] of this.shortCache.entries()) {
+                if ((now - value.timestamp) > this.shortCacheExpiry) {
+                    this.shortCache.delete(key);
+                }
+            }
+        }
+    }
+    
+    // Performance metrics tracking
+    updateMetrics(apiName, responseTime, success) {
+        this.metrics.totalRequests++;
+        
+        if (success) {
+            this.metrics.successfulRequests++;
+            
+            // Update average response time
+            const prevAvg = this.metrics.averageResponseTime;
+            const totalSuccessful = this.metrics.successfulRequests;
+            this.metrics.averageResponseTime = ((prevAvg * (totalSuccessful - 1)) + responseTime) / totalSuccessful;
+            
+            // Track per-API stats
+            if (!this.metrics.apiUsageStats[apiName]) {
+                this.metrics.apiUsageStats[apiName] = {
+                    requests: 0,
+                    successes: 0,
+                    avgResponseTime: 0,
+                    totalResponseTime: 0
+                };
+            }
+            
+            const apiStats = this.metrics.apiUsageStats[apiName];
+            apiStats.requests++;
+            apiStats.successes++;
+            apiStats.totalResponseTime += responseTime;
+            apiStats.avgResponseTime = apiStats.totalResponseTime / apiStats.successes;
+        }
+    }
+    
+    // Get performance report
+    getPerformanceReport() {
+        const successRate = this.metrics.totalRequests > 0 
+            ? (this.metrics.successfulRequests / this.metrics.totalRequests * 100).toFixed(1)
+            : 0;
+        
+        const cacheHitRate = this.metrics.totalRequests > 0
+            ? (this.metrics.cachedRequests / this.metrics.totalRequests * 100).toFixed(1)
+            : 0;
+        
+        return {
+            totalRequests: this.metrics.totalRequests,
+            successRate: `${successRate}%`,
+            cacheHitRate: `${cacheHitRate}%`,
+            averageResponseTime: `${Math.round(this.metrics.averageResponseTime)}ms`,
+            fallbackRequests: this.metrics.fallbackRequests,
+            apiStats: this.metrics.apiUsageStats,
+            cacheSize: this.cache.size,
+            shortCacheSize: this.shortCache.size
+        };
+    }
+    
+    // Enhanced main function to get restaurant data
+    async getRestaurantData(dish, category, city) {
+        const startTime = Date.now();
+        this.metrics.totalRequests++;
+        
+        const cacheKey = this.getCacheKey(dish, city);
+        
+        // Check multi-tier cache first
+        const cachedResult = this.getCachedData(cacheKey);
+        if (cachedResult) {
+            console.log(`Using ${cachedResult.tier} cached data for ${dish} in ${city}`);
+            return { 
+                success: true, 
+                data: cachedResult.data, 
+                source: cachedResult.source,
+                responseTime: Date.now() - startTime
+            };
+        }
+        
+        // Try APIs with enhanced failure handling
+        const availableAPIs = this.getAvailableAPIs();
+        console.log(`Available APIs for ${dish} in ${city}:`, availableAPIs.map(([name, api]) => `${name}(${api.healthStatus})`));
+        
+        for (const [apiName, apiConfig] of availableAPIs) {
+            try {
+                console.log(`Trying ${apiConfig.name} API for ${dish} in ${city} (Health: ${apiConfig.healthStatus})`);
+                
+                const result = await this.callAPIWithTimeout(apiName, dish, city);
+                
+                if (result.success) {
+                    // Cache successful result
+                    this.setCachedData(cacheKey, result.data);
+                    
+                    // Update usage and metrics
+                    this.updateUsage(apiName);
+                    
+                    const responseTime = Date.now() - startTime;
+                    console.log(`✅ ${apiConfig.name} API succeeded in ${responseTime}ms`);
+                    
+                    return { 
+                        ...result, 
+                        source: apiConfig.name,
+                        responseTime: responseTime
+                    };
+                }
+            } catch (error) {
+                console.warn(`❌ ${apiConfig.name} API failed:`, error.message);
+                continue;
+            }
+        }
+        
+        // All APIs failed - return fallback data
+        this.metrics.fallbackRequests++;
+        const fallbackData = this.getFallbackData(dish, category, city);
+        
+        // Cache fallback data with shorter expiry
+        this.setCachedData(cacheKey, fallbackData, true);
+        
+        const responseTime = Date.now() - startTime;
+        console.log(`🔄 All APIs failed/exhausted, using fallback data (${responseTime}ms)`);
+        
+        return { 
+            success: true, 
+            data: fallbackData, 
+            source: 'fallback',
+            responseTime: responseTime
+        };
+    }
+    
+    // API implementation dispatcher
+    async callAPIImplementation(apiName, dish, city, signal, isHealthCheck = false) {
+        const api = this.apis[apiName];
+        
+        switch (apiName) {
+            case 'yelp':
+                return await this.callYelpAPI(dish, city, api, signal, isHealthCheck);
+            case 'google':
+                return await this.callGoogleAPI(dish, city, api, signal, isHealthCheck);
+            case 'foursquare':
+                return await this.callFoursquareAPI(dish, city, api, signal, isHealthCheck);
+            case 'zomato':
+                return await this.callZomatoAPI(dish, city, api, signal, isHealthCheck);
+            default:
+                throw new Error(`Unknown API: ${apiName}`);
+        }
+    }
+    
+    // Enhanced Yelp API implementation
+    async callYelpAPI(dish, city, api, signal, isHealthCheck = false) {
+        const searchTerm = isHealthCheck ? 'restaurant' : `${dish} restaurant`;
+        const url = `${api.endpoint}?term=${encodeURIComponent(searchTerm)}&location=${encodeURIComponent(city)}&limit=3&sort_by=rating`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'Authorization': `Bearer ${api.key}`,
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Yelp API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.businesses || data.businesses.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatYelpData(data.businesses)
+        };
+    }
+    
+    // Enhanced Google Places API implementation  
+    async callGoogleAPI(dish, city, api, signal, isHealthCheck = false) {
+        const query = isHealthCheck ? `restaurant ${city}` : `${dish} restaurant ${city}`;
+        const url = `${api.endpoint}?query=${encodeURIComponent(query)}&key=${api.key}&fields=name,formatted_address,rating,price_level,types`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Google API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.status && data.status !== 'OK') {
+            throw new Error(`Google API status: ${data.status}`);
+        }
+        
+        if (!data.results || data.results.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatGoogleData(data.results.slice(0, 3))
+        };
+    }
+    
+    // Enhanced Foursquare API implementation
+    async callFoursquareAPI(dish, city, api, signal, isHealthCheck = false) {
+        const query = isHealthCheck ? 'restaurant' : dish;
+        const url = `${api.endpoint}?query=${encodeURIComponent(query)}&near=${encodeURIComponent(city)}&limit=3&categories=13000`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'Authorization': api.key,
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Foursquare API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.results || data.results.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatFoursquareData(data.results)
+        };
+    }
+    
+    // New Zomato API implementation
+    async callZomatoAPI(dish, city, api, signal, isHealthCheck = false) {
+        const query = isHealthCheck ? 'restaurant' : dish;
+        const url = `${api.endpoint}?q=${encodeURIComponent(query)}&entity_type=city&entity_id=${this.getCityId(city)}&count=3&sort=rating&order=desc`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'user-key': api.key,
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Zomato API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.restaurants || data.restaurants.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatZomatoData(data.restaurants)
+        };
+    }
+    
+    // Helper method to get city ID for Zomato API
+    getCityId(city) {
+        const cityIds = {
+            'sydney': 259,
+            'melbourne': 259,
+            'brisbane': 259
+        };
+        return cityIds[city.toLowerCase()] || 259;
+    }
+    
+    // Format Yelp data to standard format
+    formatYelpData(businesses) {
+        return businesses.map(business => ({
+            name: business.name,
+            location: business.location.display_address.join(', '),
+            rating: business.rating.toFixed(1),
+            priceLevel: '💰'.repeat(business.price ? business.price.length : 2),
+            specialty: business.categories[0]?.title || 'Restaurant',
+            distance: business.distance ? `${(business.distance / 1000).toFixed(1)}km` : null
+        }));
+    }
+    
+    // Format Google data to standard format
+    formatGoogleData(places) {
+        return places.map(place => ({
+            name: place.name,
+            location: place.formatted_address,
+            rating: place.rating ? place.rating.toFixed(1) : '4.0',
+            priceLevel: '💰'.repeat(place.price_level || 2),
+            specialty: place.types[0]?.replace('_', ' ') || 'Restaurant',
+            distance: null // Google doesn't provide distance in text search
+        }));
+    }
+    
+    // Format Foursquare data to standard format
+    formatFoursquareData(venues) {
+        return venues.map(venue => ({
+            name: venue.name,
+            location: venue.location.formatted_address || venue.location.address,
+            rating: venue.rating ? venue.rating.toFixed(1) : '4.2',
+            priceLevel: '💰'.repeat(venue.price || 2),
+            specialty: venue.categories[0]?.name || 'Restaurant',
+            distance: venue.distance ? `${(venue.distance / 1000).toFixed(1)}km` : null
+        }));
+    }
+    
+    // Format Zomato data to standard format
+    formatZomatoData(restaurants) {
+        return restaurants.map(item => {
+            const restaurant = item.restaurant;
+            return {
+                name: restaurant.name,
+                location: restaurant.location.address,
+                rating: restaurant.user_rating.aggregate_rating || '4.0',
+                priceLevel: '💰'.repeat(restaurant.price_range || 2),
+                specialty: restaurant.cuisines || 'Restaurant',
+                distance: null
+            };
+        });
+    }
+    
+    // Enhanced restaurant data with location support
+    async getRestaurantDataWithLocation(dish, category, location, city) {
+        const startTime = Date.now();
+        this.metrics.totalRequests++;
+        
+        const cacheKey = this.getCacheKey(`${dish}_${location.lat}_${location.lng}`, city);
+        
+        // Check multi-tier cache first
+        const cachedResult = this.getCachedData(cacheKey);
+        if (cachedResult) {
+            console.log(`Using ${cachedResult.tier} cached data for ${dish} near ${location.lat},${location.lng}`);
+            return { 
+                success: true, 
+                data: cachedResult.data, 
+                source: cachedResult.source,
+                responseTime: Date.now() - startTime
+            };
+        }
+        
+        // Try APIs with location coordinates
+        const availableAPIs = this.getAvailableAPIs();
+        console.log(`Available APIs for ${dish} near location:`, availableAPIs.map(([name, api]) => `${name}(${api.healthStatus})`));
+        
+        for (const [apiName, apiConfig] of availableAPIs) {
+            try {
+                console.log(`Trying ${apiConfig.name} API for ${dish} near ${location.lat},${location.lng}`);
+                
+                const result = await this.callAPIWithLocationTimeout(apiName, dish, location, city);
+                
+                if (result.success) {
+                    // Cache successful result with location
+                    this.setCachedData(cacheKey, result.data);
+                    
+                    // Update usage and metrics
+                    this.updateUsage(apiName);
+                    
+                    const responseTime = Date.now() - startTime;
+                    console.log(`✅ ${apiConfig.name} API succeeded in ${responseTime}ms`);
+                    
+                    return { 
+                        ...result, 
+                        source: apiConfig.name,
+                        responseTime: responseTime,
+                        location: location
+                    };
+                }
+            } catch (error) {
+                console.warn(`❌ ${apiConfig.name} API failed:`, error.message);
+                continue;
+            }
+        }
+        
+        // All APIs failed - return fallback data
+        this.metrics.fallbackRequests++;
+        const fallbackData = this.getFallbackData(dish, category, city);
+        
+        // Add distance calculation to fallback data
+        const fallbackWithDistance = fallbackData.map(restaurant => ({
+            ...restaurant,
+            distance: this.calculateRestaurantDistance(location, restaurant, city)
+        })).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        
+        // Cache fallback data with shorter expiry
+        this.setCachedData(cacheKey, fallbackWithDistance, true);
+        
+        const responseTime = Date.now() - startTime;
+        console.log(`🔄 All APIs failed, using fallback data with distance calculation (${responseTime}ms)`);
+        
+        return { 
+            success: true, 
+            data: fallbackWithDistance.slice(0, 3), // Top 3 closest
+            source: 'fallback',
+            responseTime: responseTime,
+            location: location
+        };
+    }
+    
+    // API call with location timeout
+    async callAPIWithLocationTimeout(apiName, dish, location, city) {
+        const api = this.apis[apiName];
+        let retryCount = 0;
+        
+        while (retryCount <= api.maxRetries) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), api.timeout);
+                
+                const startTime = Date.now();
+                const response = await this.callAPIImplementationWithLocation(apiName, dish, location, city, controller.signal);
+                const responseTime = Date.now() - startTime;
+                
+                clearTimeout(timeoutId);
+                
+                // Update metrics
+                this.updateMetrics(apiName, responseTime, true);
+                
+                // Success - reset failure count
+                api.consecutiveFailures = 0;
+                if (api.healthStatus !== 'healthy') {
+                    api.healthStatus = 'healthy';
+                }
+                
+                return response;
+                
+            } catch (error) {
+                retryCount++;
+                
+                if (retryCount <= api.maxRetries) {
+                    // Exponential backoff
+                    const delay = Math.min(1000 * Math.pow(2, retryCount - 1), 5000);
+                    console.log(`Retrying ${apiName} in ${delay}ms (attempt ${retryCount}/${api.maxRetries})`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    continue;
+                }
+                
+                // All retries exhausted
+                this.handleAPIFailure(apiName, error);
+                this.updateMetrics(apiName, 0, false);
+                throw error;
+            }
+        }
+    }
+    
+    // API implementation with location coordinates
+    async callAPIImplementationWithLocation(apiName, dish, location, city, signal) {
+        const api = this.apis[apiName];
+        
+        switch (apiName) {
+            case 'yelp':
+                return await this.callYelpAPIWithLocation(dish, location, api, signal);
+            case 'google':
+                return await this.callGoogleAPIWithLocation(dish, location, api, signal);
+            case 'foursquare':
+                return await this.callFoursquareAPIWithLocation(dish, location, api, signal);
+            case 'zomato':
+                return await this.callZomatoAPIWithLocation(dish, location, city, api, signal);
+            default:
+                throw new Error(`Unknown API: ${apiName}`);
+        }
+    }
+    
+    // Location-based API implementations
+    async callYelpAPIWithLocation(dish, location, api, signal) {
+        const url = `${api.endpoint}?term=${encodeURIComponent(dish + ' restaurant')}&latitude=${location.lat}&longitude=${location.lng}&radius=5000&limit=3&sort_by=distance`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'Authorization': `Bearer ${api.key}`,
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Yelp API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.businesses || data.businesses.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatYelpDataWithDistance(data.businesses)
+        };
+    }
+    
+    async callGoogleAPIWithLocation(dish, location, api, signal) {
+        const url = `${api.endpoint}?query=${encodeURIComponent(dish + ' restaurant')}&location=${location.lat},${location.lng}&radius=5000&key=${api.key}`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Google API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.status && data.status !== 'OK') {
+            throw new Error(`Google API status: ${data.status}`);
+        }
+        
+        if (!data.results || data.results.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatGoogleDataWithDistance(data.results.slice(0, 3), location)
+        };
+    }
+    
+    async callFoursquareAPIWithLocation(dish, location, api, signal) {
+        const url = `${api.endpoint}?query=${encodeURIComponent(dish)}&ll=${location.lat},${location.lng}&radius=5000&limit=3&categories=13000`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'Authorization': api.key,
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Foursquare API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.results || data.results.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatFoursquareDataWithDistance(data.results)
+        };
+    }
+    
+    async callZomatoAPIWithLocation(dish, location, city, api, signal) {
+        const url = `${api.endpoint}?q=${encodeURIComponent(dish)}&lat=${location.lat}&lon=${location.lng}&radius=5000&count=3&sort=real_distance&order=asc`;
+        
+        const response = await fetch(url, {
+            signal,
+            headers: {
+                'user-key': api.key,
+                'Accept': 'application/json',
+                'User-Agent': 'LunchRoulette/1.0'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Zomato API error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.restaurants || data.restaurants.length === 0) {
+            throw new Error('No restaurants found');
+        }
+        
+        return {
+            success: true,
+            data: this.formatZomatoDataWithDistance(data.restaurants)
+        };
+    }
+    
+    // Enhanced data formatting with distance
+    formatYelpDataWithDistance(businesses) {
+        return businesses.map(business => ({
+            name: business.name,
+            location: business.location.display_address.join(', '),
+            rating: business.rating.toFixed(1),
+            priceLevel: '💰'.repeat(business.price ? business.price.length : 2),
+            specialty: business.categories[0]?.title || 'Restaurant',
+            distance: business.distance ? `${(business.distance / 1000).toFixed(1)}km` : null,
+            phone: business.phone || null,
+            url: business.url || null
+        }));
+    }
+    
+    formatGoogleDataWithDistance(places, userLocation) {
+        return places.map(place => ({
+            name: place.name,
+            location: place.formatted_address,
+            rating: place.rating ? place.rating.toFixed(1) : '4.0',
+            priceLevel: '💰'.repeat(place.price_level || 2),
+            specialty: place.types[0]?.replace('_', ' ') || 'Restaurant',
+            distance: place.geometry ? this.calculateDistanceFromCoords(
+                userLocation, 
+                { lat: place.geometry.location.lat, lng: place.geometry.location.lng }
+            ) : null,
+            placeId: place.place_id || null
+        }));
+    }
+    
+    formatFoursquareDataWithDistance(venues) {
+        return venues.map(venue => ({
+            name: venue.name,
+            location: venue.location.formatted_address || venue.location.address,
+            rating: venue.rating ? venue.rating.toFixed(1) : '4.2',
+            priceLevel: '💰'.repeat(venue.price || 2),
+            specialty: venue.categories[0]?.name || 'Restaurant',
+            distance: venue.distance ? `${(venue.distance / 1000).toFixed(1)}km` : null,
+            fsqId: venue.fsq_id || null
+        }));
+    }
+    
+    formatZomatoDataWithDistance(restaurants) {
+        return restaurants.map(item => {
+            const restaurant = item.restaurant;
+            return {
+                name: restaurant.name,
+                location: restaurant.location.address,
+                rating: restaurant.user_rating.aggregate_rating || '4.0',
+                priceLevel: '💰'.repeat(restaurant.price_range || 2),
+                specialty: restaurant.cuisines || 'Restaurant',
+                distance: restaurant.location.distance ? `${restaurant.location.distance}km` : null,
+                zomatoId: restaurant.id || null
+            };
+        });
+    }
+    
+    // Calculate distance between two coordinates
+    calculateDistanceFromCoords(pos1, pos2) {
+        const R = 6371; // Earth's radius in km
+        const dLat = (pos2.lat - pos1.lat) * Math.PI / 180;
+        const dLng = (pos2.lng - pos1.lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(pos1.lat * Math.PI / 180) * Math.cos(pos2.lat * Math.PI / 180) *
+                  Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return `${(R * c).toFixed(1)}km`;
+    }
+    
+    // Calculate distance to fallback restaurants
+    calculateRestaurantDistance(userLocation, restaurant, city) {
+        // Use estimated coordinates for fallback restaurants
+        const cityCoords = {
+            sydney: { lat: -33.8688, lng: 151.2093 },
+            melbourne: { lat: -37.8136, lng: 144.9631 },
+            brisbane: { lat: -27.4698, lng: 153.0251 }
+        };
+        
+        const cityCenter = cityCoords[city.toLowerCase()] || cityCoords.sydney;
+        
+        // Add some random offset to simulate different restaurant locations
+        const restaurantLocation = {
+            lat: cityCenter.lat + (Math.random() - 0.5) * 0.1, // ±5km roughly
+            lng: cityCenter.lng + (Math.random() - 0.5) * 0.1
+        };
+        
+        return this.calculateDistanceFromCoords(userLocation, restaurantLocation);
+    }
+    
+    // Fallback data when APIs fail
+    getFallbackData(dish, category, city) {
+        return getRealRestaurantsForDish(dish, category, city);
+    }
+    
+    // Get usage statistics
+    getUsageStats() {
+        const stats = {};
+        for (const [name, api] of Object.entries(this.apis)) {
+            stats[name] = {
+                used: api.used,
+                limit: api.dailyLimit,
+                remaining: api.dailyLimit - api.used,
+                enabled: api.enabled,
+                healthStatus: api.healthStatus,
+                lastError: api.lastError,
+                consecutiveFailures: api.consecutiveFailures,
+                priority: api.priority
+            };
+        }
+        return stats;
+    }
+    
+    // Enable/disable API
+    toggleAPI(apiName, enabled) {
+        if (this.apis[apiName]) {
+            this.apis[apiName].enabled = enabled;
+            console.log(`API ${apiName} ${enabled ? 'enabled' : 'disabled'}`);
+        }
+    }
+    
+    // Reset API usage for testing
+    resetAPIUsage(apiName = null) {
+        const dateKey = this.getDateKey();
+        if (apiName) {
+            this.apis[apiName].used = 0;
+            localStorage.setItem(`${apiName}_used_${dateKey}`, '0');
+        } else {
+            // Reset all APIs
+            Object.keys(this.apis).forEach(name => {
+                this.apis[name].used = 0;
+                localStorage.setItem(`${name}_used_${dateKey}`, '0');
+            });
+        }
+    }
+    
+    // Get comprehensive status report
+    getStatusReport() {
+        const report = {
+            timestamp: new Date().toISOString(),
+            performance: this.getPerformanceReport(),
+            apis: {},
+            cache: {
+                mainCacheSize: this.cache.size,
+                shortCacheSize: this.shortCache.size,
+                cacheExpiry: `${this.cacheExpiry / (1000 * 60 * 60)}h`,
+                shortCacheExpiry: `${this.shortCacheExpiry / (1000 * 60)}min`
+            },
+            circuitBreaker: this.circuitBreaker
+        };
+        
+        // Add detailed API info
+        Object.entries(this.apis).forEach(([name, api]) => {
+            report.apis[name] = {
+                enabled: api.enabled,
+                health: api.healthStatus,
+                usage: `${api.used}/${api.dailyLimit}`,
+                remaining: api.dailyLimit - api.used,
+                priority: api.priority,
+                failures: api.consecutiveFailures,
+                lastError: api.lastError,
+                timeout: `${api.timeout}ms`,
+                maxRetries: api.maxRetries
+            };
+        });
+        
+        return report;
+    }
+}
+
+// Initialize the restaurant API service
+const restaurantAPI = new RestaurantAPIService();
+
+// API Status and Management Functions
+window.showAPIUsage = function() {
+    const report = restaurantAPI.getStatusReport();
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>📊 API Status & Performance Report</h2>
+                <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                ${generateAPIReport(report)}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Auto-refresh every 10 seconds
+    const refreshInterval = setInterval(() => {
+        if (!document.body.contains(modal)) {
+            clearInterval(refreshInterval);
+            return;
+        }
+        const updatedReport = restaurantAPI.getStatusReport();
+        modal.querySelector('.modal-body').innerHTML = generateAPIReport(updatedReport);
+    }, 10000);
+};
+
+function generateAPIReport(report) {
+    const healthStatusColors = {
+        healthy: '#28a745',
+        degraded: '#ffc107', 
+        unhealthy: '#dc3545',
+        unknown: '#6c757d',
+        half_open: '#17a2b8'
+    };
+    
+    return `
+        <div class="api-report">
+            <!-- Performance Overview -->
+            <div class="section">
+                <h3>🎯 Performance Overview</h3>
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 15px 0;">
+                    <div class="stat-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #007bff;">${report.performance.totalRequests}</div>
+                        <div style="font-size: 0.9em; color: #6c757d;">Total Requests</div>
+                    </div>
+                    <div class="stat-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #28a745;">${report.performance.successRate}</div>
+                        <div style="font-size: 0.9em; color: #6c757d;">Success Rate</div>
+                    </div>
+                    <div class="stat-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #17a2b8;">${report.performance.cacheHitRate}</div>
+                        <div style="font-size: 0.9em; color: #6c757d;">Cache Hit Rate</div>
+                    </div>
+                    <div class="stat-card" style="background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #ffc107;">${report.performance.averageResponseTime}</div>
+                        <div style="font-size: 0.9em; color: #6c757d;">Avg Response</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Status -->
+            <div class="section">
+                <h3>🔌 API Health Status</h3>
+                <div class="api-grid" style="margin: 15px 0;">
+                    ${Object.entries(report.apis).map(([name, api]) => `
+                        <div class="api-card" style="border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin: 10px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0; text-transform: capitalize;">${name}</h4>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="background: ${healthStatusColors[api.health]}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">
+                                        ${api.health.toUpperCase()}
+                                    </span>
+                                    <label style="display: flex; align-items: center; gap: 5px; font-size: 0.9em;">
+                                        <input type="checkbox" ${api.enabled ? 'checked' : ''} 
+                                               onchange="restaurantAPI.toggleAPI('${name}', this.checked)">
+                                        Enabled
+                                    </label>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; font-size: 0.9em;">
+                                <div>Usage: <strong>${api.usage}</strong></div>
+                                <div>Priority: <strong>${api.priority}</strong></div>
+                                <div>Failures: <strong>${api.failures}</strong></div>
+                                <div>Timeout: <strong>${api.timeout}</strong></div>
+                            </div>
+                            ${api.lastError ? `<div style="margin-top: 10px; padding: 8px; background: #f8d7da; border-radius: 4px; font-size: 0.8em; color: #721c24;">
+                                Last Error: ${api.lastError}
+                            </div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Cache Information -->
+            <div class="section">
+                <h3>💾 Cache Status</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div>Main Cache: <strong>${report.cache.mainCacheSize} entries</strong></div>
+                        <div>Short Cache: <strong>${report.cache.shortCacheSize} entries</strong></div>
+                        <div>Cache Expiry: <strong>${report.cache.cacheExpiry}</strong></div>
+                        <div>Short Expiry: <strong>${report.cache.shortCacheExpiry}</strong></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="section">
+                <h3>⚙️ Control Panel</h3>
+                <div style="display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap;">
+                    <button onclick="restaurantAPI.resetAPIUsage(); showAPIUsage();" 
+                            style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                        Reset All Usage
+                    </button>
+                    <button onclick="downloadAPIReport()" 
+                            style="background: #28a745; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                        Download Report
+                    </button>
+                    <button onclick="clearAllCaches()" 
+                            style="background: #ffc107; color: black; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                        Clear Caches
+                    </button>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding: 10px; background: #e9ecef; border-radius: 4px; font-size: 0.8em; color: #6c757d;">
+                Report generated at: ${new Date(report.timestamp).toLocaleString()}
+                <br>Auto-refresh every 10 seconds
+            </div>
+        </div>
+    `;
+}
+
+// Additional control functions
+window.downloadAPIReport = function() {
+    const report = restaurantAPI.getStatusReport();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(report, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `api-report-${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+};
+
+window.clearAllCaches = function() {
+    restaurantAPI.cache.clear();
+    restaurantAPI.shortCache.clear();
+    console.log('All caches cleared');
+    if (document.querySelector('.api-report')) {
+        showAPIUsage(); // Refresh the display
+    }
+};
+
+// Additional helper functions for enhanced user experience
+window.refreshRestaurantResults = async function(dish, category) {
+    // Clear cache for this specific search to get fresh results
+    const cacheKey = restaurantAPI.getCacheKey(dish, locationService.detectedCity || currentState.selectedCity);
+    restaurantAPI.cache.delete(cacheKey);
+    restaurantAPI.shortCache.delete(cacheKey);
+    
+    // Re-run the search
+    await showTop3RestaurantsNearby(dish, category);
+};
+
+window.toggleLocationMode = function() {
+    // Allow users to switch between GPS and city-based location
+    if (locationService.locationAccuracy === 'gps') {
+        // Switch to city mode
+        locationService.locationAccuracy = 'city';
+        alert('Switched to city-based location. Your next search will use the selected city center.');
+    } else {
+        // Try to enable GPS mode
+        locationService.getBestLocation().then(() => {
+            alert('GPS location enabled! Your next search will use your exact location.');
+        }).catch(() => {
+            alert('GPS location not available. Please enable location services in your browser.');
+        });
+    }
+};
+
+// Enhanced city update function with location awareness
+function updateCityWithLocationAwareness(city) {
+    const previousCity = currentState.selectedCity;
+    currentState.selectedCity = city;
+    
+    // Update city select value
+    elements.citySelect.value = city;
+    
+    // Save city selection
+    localStorage.setItem('selectedCity', city);
+    
+    // Clear location-specific cache when city changes
+    if (previousCity !== city) {
+        console.log(`City changed from ${previousCity} to ${city}, clearing location cache`);
+        locationService.detectedCity = null;
+        locationService.userLocation = null;
+        
+        // Clear cached restaurant data for the previous city
+        const cacheKeysToRemove = [];
+        for (const key of restaurantAPI.cache.keys()) {
+            if (key.includes(previousCity.toLowerCase())) {
+                cacheKeysToRemove.push(key);
+            }
+        }
+        cacheKeysToRemove.forEach(key => restaurantAPI.cache.delete(key));
+    }
+    
+    // Regenerate options
+    generateRoulette();
+    updateOptionsDisplay();
+}
+
+// Location status indicator for the main interface
+function updateLocationStatusIndicator() {
+    const headerContent = document.querySelector('.header-content');
+    let statusIndicator = document.getElementById('locationStatus');
+    
+    if (!statusIndicator) {
+        statusIndicator = document.createElement('div');
+        statusIndicator.id = 'locationStatus';
+        statusIndicator.style.cssText = `
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.7em;
+            padding: 3px 6px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #6c757d;
+        `;
+        headerContent.appendChild(statusIndicator);
+    }
+    
+    if (locationService.locationAccuracy === 'gps') {
+        statusIndicator.innerHTML = '🎯 GPS';
+        statusIndicator.style.background = '#d4edda';
+        statusIndicator.style.color = '#155724';
+        statusIndicator.title = 'Using GPS location for accurate results';
+    } else {
+        statusIndicator.innerHTML = '🏙️ City';
+        statusIndicator.style.background = '#fff3cd';
+        statusIndicator.style.color = '#856404';
+        statusIndicator.title = 'Using city-based location';
+    }
+    
+    statusIndicator.onclick = toggleLocationMode;
+    statusIndicator.style.cursor = 'pointer';
+}
+
+// Map integration functions
+window.openInMaps = function(query, coordinates = null) {
+    let url;
+    
+    if (coordinates && coordinates.includes(',')) {
+        // Use coordinates if available
+        const [lat, lng] = coordinates.split(',').map(c => c.trim());
+        url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}&center=${lat},${lng}`;
+    } else {
+        // Use text search
+        url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+    }
+    
+    window.open(url, '_blank');
+};
+
+// GPS refresh function
+window.refreshGPSLocation = async function() {
+    const locationText = document.getElementById('locationText');
+    const refreshBtn = document.getElementById('locationRefresh');
+    
+    if (refreshBtn) refreshBtn.innerHTML = '⏳';
+    
+    try {
+        await gpsService.getCurrentLocation();
+        if (refreshBtn) refreshBtn.innerHTML = '🔄';
+    } catch (error) {
+        if (refreshBtn) refreshBtn.innerHTML = '❌';
+        setTimeout(() => {
+            if (refreshBtn) refreshBtn.innerHTML = '🔄';
+        }, 3000);
+    }
+};
+
+// Enhanced refresh restaurant function
+window.refreshRestaurantResults = async function(dish, category) {
+    console.log(`🔄 Refreshing results for ${dish}`);
+    
+    // Clear any existing suggestion container to force fresh results
+    const suggestionContainer = document.getElementById('restaurantSuggestions');
+    if (suggestionContainer) {
+        suggestionContainer.remove();
+    }
+    
+    // Re-run the search with fresh GPS location
+    try {
+        await showTop3RestaurantsNearby(dish, category);
+    } catch (error) {
+        console.error('Refresh failed:', error);
+        showErrorMessage('Failed to refresh results. Please check your location permission and try again.');
+    }
+};
+
+// Error message display
+function showErrorMessage(message) {
+    let suggestionContainer = document.getElementById('restaurantSuggestions');
+    if (!suggestionContainer) {
+        const dishesGrid = document.getElementById('dishesGrid');
+        suggestionContainer = document.createElement('div');
+        suggestionContainer.id = 'restaurantSuggestions';
+        suggestionContainer.className = 'restaurant-suggestions';
+        dishesGrid.parentNode.insertBefore(suggestionContainer, dishesGrid.nextSibling);
+    }
+    
+    suggestionContainer.innerHTML = `
+        <div class="error-container" style="text-align: center; padding: 20px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; margin: 20px 0;">
+            <h4 style="color: #721c24;">⚠️ Location Error</h4>
+            <p style="color: #721c24; margin: 10px 0;">${message}</p>
+            <div style="margin: 15px 0;">
+                <button onclick="refreshGPSLocation()" style="background: #17a2b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin: 0 5px;">
+                    🎯 Try Location Again
+                </button>
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin: 0 5px;">
+                    ✕ Dismiss
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+// Console API for developers
+window.restaurantAPIDebug = {
+    getReport: () => restaurantAPI.getStatusReport(),
+    getStats: () => restaurantAPI.getUsageStats(),
+    toggleAPI: (name, enabled) => restaurantAPI.toggleAPI(name, enabled),
+    resetUsage: (name) => restaurantAPI.resetAPIUsage(name),
+    clearCache: () => { restaurantAPI.cache.clear(); restaurantAPI.shortCache.clear(); },
+    healthCheck: (name) => restaurantAPI.performHealthCheck(name),
+    gpsService: gpsService,
+    testLocation: () => gpsService.getCurrentLocation(),
+    watchLocation: () => gpsService.startWatching(),
+    stopWatch: () => gpsService.stopWatching()
+};
+
+// Pure GPS Location Service - No city fallback
+class GPSLocationService {
+    constructor() {
+        this.userLocation = null;
+        this.locationAccuracy = null;
+        this.locationAge = null;
+        this.isWatching = false;
+        this.watchId = null;
+    }
+    
+    async getCurrentLocation() {
+        try {
+            // Try high accuracy first
+            const location = await this.getGPSLocation(true);
+            this.userLocation = location;
+            this.locationAge = Date.now();
+            this.updateLocationDisplay();
+            
+            console.log(`📍 GPS Location: ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)} (±${Math.round(location.accuracy)}m)`);
+            return {
+                location: location,
+                accuracy: 'gps',
+                source: `GPS coordinates (±${Math.round(location.accuracy)}m)`
+            };
+        } catch (error) {
+            console.warn('High accuracy GPS failed, trying quick mode:', error.message);
+            
+            try {
+                // Fallback to quick mode
+                const location = await this.getGPSLocation(false);
+                this.userLocation = location;
+                this.locationAge = Date.now();
+                this.updateLocationDisplay();
+                
+                console.log(`📍 GPS Location (quick mode): ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)} (±${Math.round(location.accuracy)}m)`);
+                return {
+                    location: location,
+                    accuracy: 'gps_quick',
+                    source: `GPS coordinates - quick mode (±${Math.round(location.accuracy)}m)`
+                };
+            } catch (quickError) {
+                console.error('All GPS location methods failed:', quickError.message);
+                this.updateLocationDisplay(quickError);
+                throw quickError;
+            }
+        }
+    }
+    
+    async getGPSLocation(highAccuracy = true) {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error('Geolocation not supported by this browser'));
+                return;
+            }
+            
+            const options = highAccuracy ? {
+                enableHighAccuracy: true,
+                timeout: 8000, // 8 seconds for high accuracy
+                maximumAge: 30 * 1000 // 30 seconds cache
+            } : {
+                enableHighAccuracy: false,
+                timeout: 3000, // 3 seconds for quick mode
+                maximumAge: 60 * 1000 // 1 minute cache for quick mode
+            };
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        timestamp: position.timestamp
+                    });
+                },
+                (error) => {
+                    let message = 'Unknown location error';
+                    switch(error.code) {
+                        case error.PERMISSION_DENIED:
+                            message = 'Location access denied by user';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            message = 'Location information unavailable';
+                            break;
+                        case error.TIMEOUT:
+                            message = 'Location request timed out';
+                            break;
+                    }
+                    reject(new Error(message));
+                },
+                options
+            );
+        });
+    }
+    
+    startWatching() {
+        if (this.isWatching) return;
+        
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 30000,
+            maximumAge: 60000 // 1 minute
+        };
+        
+        this.watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                this.userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    accuracy: position.coords.accuracy,
+                    timestamp: position.timestamp
+                };
+                this.locationAge = Date.now();
+                this.updateLocationDisplay();
+                console.log('📍 Location updated:', this.userLocation);
+            },
+            (error) => {
+                console.warn('Location watch error:', error.message);
+                this.updateLocationDisplay(error);
+            },
+            options
+        );
+        
+        this.isWatching = true;
+    }
+    
+    stopWatching() {
+        if (this.watchId !== null) {
+            navigator.geolocation.clearWatch(this.watchId);
+            this.watchId = null;
+            this.isWatching = false;
+        }
+    }
+    
+    updateLocationDisplay(error = null) {
+        const locationText = document.getElementById('locationText');
+        const locationIcon = document.querySelector('#locationDisplay .settings-icon');
+        
+        if (!locationText) return;
+        
+        if (error) {
+            locationText.textContent = `Location unavailable: ${error.message}`;
+            locationText.style.color = '#dc3545';
+            if (locationIcon) locationIcon.textContent = '❌';
+            return;
+        }
+        
+        if (this.userLocation) {
+            const accuracy = Math.round(this.userLocation.accuracy);
+            locationText.textContent = `GPS Location (±${accuracy}m)`;
+            locationText.style.color = '#28a745';
+            if (locationIcon) locationIcon.textContent = '🎯';
+        } else {
+            locationText.textContent = 'Detecting location...';
+            locationText.style.color = '#6c757d';
+            if (locationIcon) locationIcon.textContent = '🔍';
+        }
+    }
+    
+    calculateDistance(pos1, pos2) {
+        const R = 6371; // Earth's radius in km
+        const dLat = (pos2.lat - pos1.lat) * Math.PI / 180;
+        const dLng = (pos2.lng - pos1.lng) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(pos1.lat * Math.PI / 180) * Math.cos(pos2.lat * Math.PI / 180) *
+                  Math.sin(dLng/2) * Math.sin(dLng/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+    
+    formatDistance(distanceKm) {
+        if (distanceKm < 1) {
+            return `${Math.round(distanceKm * 1000)}m`;
+        } else {
+            return `${distanceKm.toFixed(1)}km`;
+        }
+    }
+}
+
+// Initialize GPS location service
+const gpsService = new GPSLocationService();
+
+// Simplified restaurant finder using GPS coordinates
+async function getRestaurantsNearLocation(dish, category, location) {
+    const startTime = Date.now();
+    console.log(`🔍 Searching for ${dish} near ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`);
+    
+    try {
+        // For now, use simulated restaurant data with calculated distances
+        const mockRestaurants = generateMockRestaurantsNearLocation(dish, category, location);
+        
+        const responseTime = Date.now() - startTime;
+        return {
+            success: true,
+            data: mockRestaurants,
+            source: 'simulated_gps',
+            responseTime: responseTime
+        };
+    } catch (error) {
+        console.error('Restaurant search failed:', error);
+        throw error;
+    }
+}
+
+// Generate mock restaurant data near GPS location
+function generateMockRestaurantsNearLocation(dish, category, userLocation) {
+    const restaurantTypes = {
+        'Pizza': [
+            { name: 'Mario\'s Authentic Pizza', specialty: 'Wood-fired Neapolitan', rating: 4.6 },
+            { name: 'Slice House', specialty: 'New York Style', rating: 4.3 },
+            { name: 'Gourmet Pizza Co.', specialty: 'Artisan Toppings', rating: 4.5 }
+        ],
+        'Sushi': [
+            { name: 'Sakura Sushi Bar', specialty: 'Fresh Sashimi', rating: 4.7 },
+            { name: 'Edo Japanese', specialty: 'Traditional Rolls', rating: 4.4 },
+            { name: 'Sushi Express', specialty: 'Quick Service', rating: 4.2 }
+        ],
+        'Burger': [
+            { name: 'The Burger Joint', specialty: 'Gourmet Burgers', rating: 4.5 },
+            { name: 'Patty Palace', specialty: 'Classic American', rating: 4.3 },
+            { name: 'Veggie Burger Bar', specialty: 'Plant-Based', rating: 4.4 }
+        ],
+        'Coffee': [
+            { name: 'Brew & Bean', specialty: 'Artisan Coffee', rating: 4.6 },
+            { name: 'Local Roasters', specialty: 'Single Origin', rating: 4.5 },
+            { name: 'Corner Café', specialty: 'Cozy Atmosphere', rating: 4.2 }
+        ]
+    };
+    
+    const templates = restaurantTypes[dish] || [
+        { name: `${dish} Express`, specialty: `Fresh ${dish}`, rating: 4.3 },
+        { name: `The ${dish} Place`, specialty: `Traditional ${dish}`, rating: 4.4 },
+        { name: `${dish} Corner`, specialty: `Quick ${dish}`, rating: 4.2 }
+    ];
+    
+    return templates.map((template, index) => {
+        // Generate random location within 2km radius
+        const distance = Math.random() * 2; // 0-2km
+        const angle = Math.random() * 2 * Math.PI;
+        
+        // Convert distance to lat/lng offset (rough approximation)
+        const latOffset = (distance / 111) * Math.cos(angle); // 111km per degree latitude
+        const lngOffset = (distance / (111 * Math.cos(userLocation.lat * Math.PI / 180))) * Math.sin(angle);
+        
+        const restaurantLocation = {
+            lat: userLocation.lat + latOffset,
+            lng: userLocation.lng + lngOffset
+        };
+        
+        const actualDistance = gpsService.calculateDistance(userLocation, restaurantLocation);
+        
+        return {
+            name: template.name,
+            location: `${Math.floor(Math.random() * 999) + 100} Main St, Local Area`,
+            rating: template.rating.toFixed(1),
+            priceLevel: '💰'.repeat(Math.floor(Math.random() * 3) + 1),
+            specialty: template.specialty,
+            distance: gpsService.formatDistance(actualDistance),
+            coordinates: restaurantLocation,
+            phone: `+1 (${Math.floor(Math.random() * 900) + 100}) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`
+        };
+    }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)); // Sort by distance
+}
+
+// Pure GPS-based restaurant finder
+window.showTop3RestaurantsNearby = async function(dish, category) {
+    console.log(`🍽️ Searching for ${dish} (${category}) using GPS location`);
+    
+    // Show loading state first
+    showLoadingState(dish);
+    
+    try {
+        // Get GPS location
+        const locationInfo = await gpsService.getCurrentLocation();
+        const { location, accuracy, source } = locationInfo;
+        
+        console.log(`🎯 Using GPS location for ${dish} search: ${source}`);
+        
+        // Get restaurant data using GPS coordinates
+        const result = await getRestaurantsNearLocation(dish, category, location);
+        const restaurants = result.data;
+        const dataSource = result.source;
+        
+        // Create or update the restaurant suggestions section
+        let suggestionContainer = document.getElementById('restaurantSuggestions');
+        if (!suggestionContainer) {
+            // Create the container if it doesn't exist
+            const dishesGrid = document.getElementById('dishesGrid');
+            suggestionContainer = document.createElement('div');
+            suggestionContainer.id = 'restaurantSuggestions';
+            suggestionContainer.className = 'restaurant-suggestions';
+            dishesGrid.parentNode.insertBefore(suggestionContainer, dishesGrid.nextSibling);
+        }
+        
+        // Get data source badge
+        const getSourceBadge = (source) => {
+            const badges = {
+                'Yelp': '🟡 Live from Yelp',
+                'Google Places': '🔵 Live from Google',
+                'Foursquare': '🟣 Live from Foursquare',
+                'cache': '💾 From Cache',
+                'fallback': '📝 Curated Data'
+            };
+            return badges[source] || '📊 Mixed Sources';
+        };
+        
+        // Create location status for GPS-based search
+        const locationStatus = `🎯 GPS Location (±${Math.round(location.accuracy || 0)}m accuracy)`;
+        
+        // Update the content with GPS-based restaurant data
+        suggestionContainer.innerHTML = `
+            <div class="suggestion-header">
+                <h4>📍 Top 3 places for <strong>${dish}</strong> near you</h4>
+                <div class="location-info-bar" style="display: flex; justify-content: space-between; align-items: center; margin: 10px 0; padding: 8px; background: #f8f9fa; border-radius: 6px; font-size: 0.85em;">
+                    <span class="location-status">${locationStatus}</span>
+                    <span class="data-source-badge">${getSourceBadge(dataSource)}</span>
+                </div>
+            </div>
+            <div class="restaurant-cards">
+                ${restaurants.map((restaurant, index) => `
+                    <div class="restaurant-card ${index === 0 ? 'closest-restaurant' : ''}" onclick="openInMaps('${restaurant.name}', ${restaurant.coordinates ? `${restaurant.coordinates.lat}, ${restaurant.coordinates.lng}` : `'${restaurant.location}'`})" style="position: relative; ${index === 0 ? 'border: 2px solid #28a745;' : ''}">
+                        <div class="restaurant-rank" style="background: ${index === 0 ? '#28a745' : '#6c757d'}; color: white; padding: 5px 8px; border-radius: 12px; font-weight: bold;">#${index + 1}</div>
+                        ${restaurant.distance && index === 0 ? '<div class="closest-badge" style="position: absolute; top: -5px; right: -5px; background: #28a745; color: white; font-size: 0.7em; padding: 2px 6px; border-radius: 10px;">Closest</div>' : ''}
+                        <div class="restaurant-info">
+                            <div class="restaurant-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                <div class="restaurant-name" style="font-weight: bold; color: #333;">${restaurant.name}</div>
+                                ${restaurant.distance ? `<div class="distance-badge" style="background: #007bff; color: white; font-size: 0.7em; padding: 2px 6px; border-radius: 10px; font-weight: bold;">${restaurant.distance}</div>` : ''}
+                            </div>
+                            <div class="restaurant-location" style="color: #6c757d; font-size: 0.9em; margin-bottom: 5px;">${restaurant.location}</div>
+                            <div class="restaurant-details" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                                <span class="restaurant-rating" style="color: #ffc107;">⭐ ${restaurant.rating}</span>
+                                <span class="restaurant-price">${restaurant.priceLevel}</span>
+                                <span class="restaurant-specialty" style="font-style: italic; color: #6c757d;">• ${restaurant.specialty}</span>
+                            </div>
+                        </div>
+                        <div class="restaurant-action" style="display: flex; align-items: center; gap: 5px;">
+                            <span title="Open in Maps" style="cursor: pointer; font-size: 1.2em;">🗺️</span>
+                            ${restaurant.phone ? `<span onclick="event.stopPropagation(); window.open('tel:${restaurant.phone}')" title="Call restaurant" style="cursor: pointer; font-size: 1.2em;">📞</span>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="suggestion-footer">
+                <div class="performance-info" style="text-align: center; margin: 10px 0; padding: 8px; background: #e9ecef; border-radius: 4px; font-size: 0.8em; color: #666;">
+                    📊 Search completed in ${result.responseTime}ms • Sorted by actual distance from your GPS location
+                </div>
+                <div class="footer-actions" style="display: flex; gap: 8px; justify-content: center; margin: 15px 0;">
+                    <button onclick="refreshRestaurantResults('${dish}', '${category}')" 
+                            class="refresh-btn" style="background: #17a2b8; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                        🔄 Refresh Results
+                    </button>
+                    <button onclick="openInMaps('${dish} restaurants near me')" 
+                            class="nearby-btn" style="background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                        🗺️ More Options  
+                    </button>
+                    <button onclick="showAPIUsage()" 
+                            class="api-btn" style="background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85em;">
+                        📊 API Status
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Show the container with animation
+        suggestionContainer.style.display = 'block';
+        suggestionContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+    } catch (error) {
+        console.error('Error showing restaurants:', error);
+        showErrorMessage(error.message || 'Unable to find restaurants nearby. Please check your location permission.');
+    }
+};
+
+// Show loading state while fetching restaurant data
+function showLoadingState(dish) {
+    let suggestionContainer = document.getElementById('restaurantSuggestions');
+    if (!suggestionContainer) {
+        const dishesGrid = document.getElementById('dishesGrid');
+        suggestionContainer = document.createElement('div');
+        suggestionContainer.id = 'restaurantSuggestions';
+        suggestionContainer.className = 'restaurant-suggestions';
+        dishesGrid.parentNode.insertBefore(suggestionContainer, dishesGrid.nextSibling);
+    }
+    
+    suggestionContainer.innerHTML = `
+        <div class="suggestion-header">
+            <h4>🔍 Finding best places for <strong>${dish}</strong>...</h4>
+        </div>
+        <div class="loading-restaurants">
+            <div class="loading-spinner">⏳</div>
+            <p>Searching nearby restaurants...</p>
+        </div>
+    `;
+    suggestionContainer.style.display = 'block';
+}
+
+// Real restaurant data based on popular local establishments and reviews
+function getRealRestaurantsForDish(dish, category, city) {
+    const realRestaurants = {
+        sydney: {
+            'Ramen': [
+                { name: 'Ippudo Sydney', location: 'CBD', rating: '4.6', priceLevel: '💰💰', specialty: 'Tonkotsu Ramen', distance: generateDistance() },
+                { name: 'Gumshara Ramen', location: 'Chinatown', rating: '4.5', priceLevel: '💰💰', specialty: 'Rich Tonkotsu', distance: generateDistance() },
+                { name: 'Menya Noodle Bar', location: 'Circular Quay', rating: '4.4', priceLevel: '💰💰', specialty: 'Authentic Japanese', distance: generateDistance() }
+            ],
+            'Pho': [
+                { name: 'Pho Pasteur', location: 'Cabramatta', rating: '4.7', priceLevel: '💰', specialty: 'Traditional Vietnamese', distance: generateDistance() },
+                { name: 'Jasmine Rice', location: 'CBD', rating: '4.3', priceLevel: '💰', specialty: 'Fresh Herbs', distance: generateDistance() },
+                { name: 'Miss Saigon', location: 'Newtown', rating: '4.4', priceLevel: '💰', specialty: 'Authentic Broth', distance: generateDistance() }
+            ],
+            'Dumplings': [
+                { name: 'Din Tai Fung', location: 'World Square', rating: '4.5', priceLevel: '💰💰', specialty: 'Xiaolongbao', distance: generateDistance() },
+                { name: 'Shanghai Night', location: 'Chinatown', rating: '4.3', priceLevel: '💰', specialty: 'Hand-made Dumplings', distance: generateDistance() },
+                { name: 'Mr. Wong', location: 'Bridge Lane', rating: '4.6', priceLevel: '💰💰💰', specialty: 'Cantonese Style', distance: generateDistance() }
+            ],
+            'Pad Thai': [
+                { name: 'Chat Thai', location: 'CBD', rating: '4.4', priceLevel: '💰💰', specialty: 'Authentic Thai', distance: generateDistance() },
+                { name: 'Spice I Am', location: 'Surry Hills', rating: '4.5', priceLevel: '💰💰', specialty: 'Street Food Style', distance: generateDistance() },
+                { name: 'Long Chim', location: 'Star City', rating: '4.3', priceLevel: '💰💰', specialty: 'David Thompson', distance: generateDistance() }
+            ],
+            'Sushi': [
+                { name: 'Sokyo', location: 'Pyrmont', rating: '4.7', priceLevel: '💰💰💰', specialty: 'Premium Sashimi', distance: generateDistance() },
+                { name: 'Kumo Izakaya', location: 'Surry Hills', rating: '4.4', priceLevel: '💰💰', specialty: 'Fresh Daily', distance: generateDistance() },
+                { name: 'Sushi Train', location: 'Various', rating: '4.2', priceLevel: '💰', specialty: 'Conveyor Belt', distance: generateDistance() }
+            ]
+        },
+        melbourne: {
+            'Flat White': [
+                { name: 'Patricia Coffee Brewers', location: 'Little Bourke St', rating: '4.6', priceLevel: '💰', specialty: 'Single Origin', distance: generateDistance() },
+                { name: 'Industry Beans', location: 'Fitzroy', rating: '4.5', priceLevel: '💰', specialty: 'Specialty Roast', distance: generateDistance() },
+                { name: 'Seven Seeds', location: 'Carlton', rating: '4.4', priceLevel: '💰', specialty: 'Coffee Roasters', distance: generateDistance() }
+            ],
+            'Smashed Avo': [
+                { name: 'Higher Ground', location: 'CBD', rating: '4.5', priceLevel: '💰💰', specialty: 'Sourdough Base', distance: generateDistance() },
+                { name: 'Top Paddock', location: 'Richmond', rating: '4.6', priceLevel: '💰💰', specialty: 'Perfect Poach', distance: generateDistance() },
+                { name: 'Auction Rooms', location: 'North Melbourne', rating: '4.4', priceLevel: '💰💰', specialty: 'Artisan Bread', distance: generateDistance() }
+            ],
+            'Gourmet Burgers': [
+                { name: '8bit', location: 'Footscray', rating: '4.7', priceLevel: '💰💰', specialty: 'Retro Gaming Theme', distance: generateDistance() },
+                { name: 'Royal Stacks', location: 'Collins St', rating: '4.4', priceLevel: '💰💰', specialty: 'American Style', distance: generateDistance() },
+                { name: 'Huxtaburger', location: 'Multiple', rating: '4.3', priceLevel: '💰💰', specialty: 'Local Beef', distance: generateDistance() }
+            ]
+        },
+        brisbane: {
+            'Beef Brisket': [
+                { name: 'Smoke BBQ', location: 'West End', rating: '4.6', priceLevel: '💰💰', specialty: '12-hour Smoke', distance: generateDistance() },
+                { name: 'Ribs & Burgers', location: 'Queen St', rating: '4.3', priceLevel: '💰💰', specialty: 'Tender & Juicy', distance: generateDistance() },
+                { name: 'Black Bear BBQ', location: 'Fortitude Valley', rating: '4.5', priceLevel: '💰💰', specialty: 'Texas Style', distance: generateDistance() }
+            ],
+            'Indian Curry': [
+                { name: 'Indian Mehfil', location: 'South Brisbane', rating: '4.5', priceLevel: '💰💰', specialty: 'North Indian', distance: generateDistance() },
+                { name: 'Garam Masala', location: 'CBD', rating: '4.4', priceLevel: '💰', specialty: 'Authentic Spices', distance: generateDistance() },
+                { name: 'Himalayan Cafe', location: 'Toowong', rating: '4.3', priceLevel: '💰', specialty: 'Nepalese Style', distance: generateDistance() }
+            ],
+            'Mango Smoothie Bowl': [
+                { name: 'Grind Coffee', location: 'New Farm', rating: '4.5', priceLevel: '💰', specialty: 'Fresh Tropical', distance: generateDistance() },
+                { name: 'The Bowls', location: 'Paddington', rating: '4.4', priceLevel: '💰', specialty: 'Local Mango', distance: generateDistance() },
+                { name: 'Naked Foods', location: 'Various', rating: '4.2', priceLevel: '💰', specialty: 'Organic Fruits', distance: generateDistance() }
+            ]
+        }
+    };
+    
+    // Get restaurants for the specific dish
+    const cityRestaurants = realRestaurants[city];
+    if (cityRestaurants && cityRestaurants[dish]) {
+        return cityRestaurants[dish];
+    }
+    
+    // Fallback to generic restaurants for this category/city
+    const fallbackRestaurants = generateFallbackRestaurants(category, city);
+    return fallbackRestaurants;
+}
+
+// Generate realistic distance based on city size
+function generateDistance() {
+    return ((Math.random() * 3) + 0.5).toFixed(1) + 'km';
+}
+
+// Fallback restaurants when specific dish data isn't available
+function generateFallbackRestaurants(category, city) {
+    const fallbacks = {
+        sydney: [
+            { name: 'Local Sydney Favorite', location: 'CBD', rating: '4.3', priceLevel: '💰💰', specialty: category, distance: generateDistance() },
+            { name: 'Harbour View Eatery', location: 'Circular Quay', rating: '4.4', priceLevel: '💰💰', specialty: 'City Views', distance: generateDistance() },
+            { name: 'Sydney Signature', location: 'Darling Harbour', rating: '4.2', priceLevel: '💰💰', specialty: 'Tourist Friendly', distance: generateDistance() }
+        ],
+        melbourne: [
+            { name: 'Laneway Legend', location: 'CBD', rating: '4.5', priceLevel: '💰💰', specialty: category, distance: generateDistance() },
+            { name: 'Melbourne Must-Try', location: 'Southbank', rating: '4.3', priceLevel: '💰💰', specialty: 'Local Favorite', distance: generateDistance() },
+            { name: 'Coffee Capital Choice', location: 'Fitzroy', rating: '4.4', priceLevel: '💰', specialty: 'Artisan Style', distance: generateDistance() }
+        ],
+        brisbane: [
+            { name: 'River City Special', location: 'South Bank', rating: '4.4', priceLevel: '💰💰', specialty: category, distance: generateDistance() },
+            { name: 'Brisbane Best', location: 'Fortitude Valley', rating: '4.3', priceLevel: '💰', specialty: 'Local Choice', distance: generateDistance() },
+            { name: 'Sunshine State Dining', location: 'West End', rating: '4.2', priceLevel: '💰💰', specialty: 'Queensland Style', distance: generateDistance() }
+        ]
+    };
+    
+    return fallbacks[city] || fallbacks['sydney'];
 }
 
 // Global function to search in maps

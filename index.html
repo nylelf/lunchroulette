@@ -17,14 +17,13 @@
                     <span class="emoji">🍽️</span>
                     <span data-lang-key="app-title">Lunch Roulette</span>
                 </h1>
-                <div class="city-selector">
-                    <div class="settings-item">
-                        <span class="settings-icon">🏙️</span>
-                        <select id="citySelect" class="settings-select city-select">
-                            <option value="sydney">🏛️ Sydney</option>
-                            <option value="melbourne">🎨 Melbourne</option>
-                            <option value="brisbane">🌴 Brisbane</option>
-                        </select>
+                <div class="location-status">
+                    <div class="settings-item" id="locationDisplay">
+                        <span class="settings-icon">🎯</span>
+                        <span id="locationText">Detecting location...</span>
+                        <button id="locationRefresh" class="icon-btn" style="margin-left: 10px; padding: 5px;" title="Refresh location">
+                            🔄
+                        </button>
                     </div>
                 </div>
             </div>
@@ -32,6 +31,7 @@
                 <div class="settings-item">
                     <span class="settings-icon">💰</span>
                     <select id="priceRange" class="settings-select">
+                        <option value="under8" data-lang-key="under8">Under $8</option>
                         <option value="budget" data-lang-key="budget">Budget ($8-15)</option>
                         <option value="medium" selected data-lang-key="medium">Medium ($12-22)</option>
                         <option value="premium" data-lang-key="premium">Premium ($20-35)</option>
@@ -124,11 +124,7 @@
                     </div>
                 </div>
                 <div class="modal-actions">
-                    <button class="action-btn primary" id="findNearbyBtn">
-                        <span>📍</span>
-                        <span data-lang-key="find-nearby">Find Nearby</span>
-                    </button>
-                    <button class="action-btn secondary" id="spinAgainBtn">
+                    <button class="action-btn primary" id="spinAgainBtn">
                         <span>🔄</span>
                         <span data-lang-key="spin-again">Spin Again</span>
                     </button>

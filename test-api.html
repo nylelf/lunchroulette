@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing - Lunch Roulette</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .primary { background: #007bff; color: white; }
+        .secondary { background: #6c757d; color: white; }
+        .danger { background: #dc3545; color: white; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Lunch Roulette API Testing Suite</h1>
+    
+    <div class="test-section">
+        <h2>基础API状态测试</h2>
+        <button class="primary" onclick="testAPIStatus()">测试API状态</button>
+        <button class="secondary" onclick="testCacheSystem()">测试缓存系统</button>
+        <button class="secondary" onclick="testErrorHandling()">测试错误处理</button>
+        <div id="basicTests"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>餐厅数据获取测试</h2>
+        <button class="primary" onclick="testRestaurantAPI()">测试餐厅API</button>
+        <button class="secondary" onclick="testFallbackData()">测试备用数据</button>
+        <div id="restaurantTests"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>性能监控测试</h2>
+        <button class="primary" onclick="testPerformanceMonitoring()">测试性能监控</button>
+        <button class="secondary" onclick="showAPIReport()">显示API报告</button>
+        <div id="performanceTests"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>API管理功能测试</h2>
+        <button class="primary" onclick="testAPIManagement()">测试API管理</button>
+        <button class="danger" onclick="resetAllTests()">重置所有测试</button>
+        <div id="managementTests"></div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Test Functions
+        function addTestResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const result = document.createElement('div');
+            result.className = `test-result ${type}`;
+            result.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            container.appendChild(result);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function testAPIStatus() {
+            addTestResult('basicTests', '开始测试API状态...', 'info');
+            
+            try {
+                const stats = restaurantAPI.getUsageStats();
+                addTestResult('basicTests', `发现 ${Object.keys(stats).length} 个API配置`, 'success');
+                
+                Object.entries(stats).forEach(([name, api]) => {
+                    const status = api.enabled ? '已启用' : '已禁用';
+                    const health = api.healthStatus || '未知';
+                    addTestResult('basicTests', `${name}: ${status}, 健康状态: ${health}, 使用量: ${api.used}/${api.limit}`, 'info');
+                });
+
+                // Test health check
+                const report = restaurantAPI.getStatusReport();
+                addTestResult('basicTests', `性能报告生成成功 - 总请求: ${report.performance.totalRequests}`, 'success');
+                
+            } catch (error) {
+                addTestResult('basicTests', `API状态测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCacheSystem() {
+            addTestResult('basicTests', '开始测试缓存系统...', 'info');
+            
+            try {
+                // Clear cache first
+                restaurantAPI.cache.clear();
+                restaurantAPI.shortCache.clear();
+                addTestResult('basicTests', '缓存已清空', 'info');
+
+                // Test cache key generation
+                const cacheKey = restaurantAPI.getCacheKey('Pizza', 'Sydney');
+                addTestResult('basicTests', `缓存键生成测试: ${cacheKey}`, 'success');
+
+                // Test cache storage
+                restaurantAPI.setCachedData(cacheKey, [{ name: 'Test Restaurant', rating: '4.5' }]);
+                addTestResult('basicTests', '测试数据已存储到缓存', 'success');
+
+                // Test cache retrieval
+                const cached = restaurantAPI.getCachedData(cacheKey);
+                if (cached) {
+                    addTestResult('basicTests', `缓存检索成功: ${cached.data.length} 条记录`, 'success');
+                } else {
+                    addTestResult('basicTests', '缓存检索失败', 'error');
+                }
+
+            } catch (error) {
+                addTestResult('basicTests', `缓存系统测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testErrorHandling() {
+            addTestResult('basicTests', '开始测试错误处理...', 'info');
+            
+            try {
+                // Test circuit breaker
+                const failAPI = 'testFail';
+                addTestResult('basicTests', '测试熔断器机制...', 'info');
+
+                // Test API failure handling
+                restaurantAPI.handleAPIFailure('yelp', new Error('Test error'));
+                addTestResult('basicTests', 'API失败处理测试完成', 'success');
+
+                // Test retry mechanism
+                addTestResult('basicTests', '重试机制已集成到API调用中', 'info');
+
+            } catch (error) {
+                addTestResult('basicTests', `错误处理测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testRestaurantAPI() {
+            addTestResult('restaurantTests', '开始测试餐厅API...', 'info');
+            
+            try {
+                const testCases = [
+                    { dish: 'Pizza', category: 'Italian', city: 'sydney' },
+                    { dish: 'Sushi', category: 'Japanese', city: 'melbourne' },
+                    { dish: 'Burger', category: 'American', city: 'brisbane' }
+                ];
+
+                for (const testCase of testCases) {
+                    addTestResult('restaurantTests', `测试 ${testCase.dish} 在 ${testCase.city}...`, 'info');
+                    
+                    const startTime = Date.now();
+                    const result = await restaurantAPI.getRestaurantData(testCase.dish, testCase.category, testCase.city);
+                    const duration = Date.now() - startTime;
+                    
+                    if (result.success) {
+                        addTestResult('restaurantTests', 
+                            `✅ ${testCase.dish}: ${result.data.length} 家餐厅, 数据源: ${result.source}, 耗时: ${duration}ms`, 
+                            'success');
+                    } else {
+                        addTestResult('restaurantTests', `❌ ${testCase.dish}: 获取失败`, 'error');
+                    }
+                }
+
+            } catch (error) {
+                addTestResult('restaurantTests', `餐厅API测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFallbackData() {
+            addTestResult('restaurantTests', '开始测试备用数据...', 'info');
+            
+            try {
+                const fallbackData = restaurantAPI.getFallbackData('Pizza', 'Italian', 'sydney');
+                if (fallbackData && fallbackData.length > 0) {
+                    addTestResult('restaurantTests', `备用数据测试成功: ${fallbackData.length} 家餐厅`, 'success');
+                    
+                    // Show sample restaurant
+                    const sample = fallbackData[0];
+                    addTestResult('restaurantTests', 
+                        `示例餐厅: ${sample.name} - 评分: ${sample.rating} - ${sample.specialty}`, 
+                        'info');
+                } else {
+                    addTestResult('restaurantTests', '备用数据为空', 'error');
+                }
+
+            } catch (error) {
+                addTestResult('restaurantTests', `备用数据测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        async function testPerformanceMonitoring() {
+            addTestResult('performanceTests', '开始测试性能监控...', 'info');
+            
+            try {
+                const report = restaurantAPI.getPerformanceReport();
+                addTestResult('performanceTests', 
+                    `性能报告: 成功率 ${report.successRate}, 缓存命中率 ${report.cacheHitRate}, 平均响应时间 ${report.averageResponseTime}`, 
+                    'success');
+
+                // Test metrics update
+                restaurantAPI.updateMetrics('test', 100, true);
+                addTestResult('performanceTests', '指标更新测试完成', 'success');
+
+                // Show cache info
+                addTestResult('performanceTests', 
+                    `缓存状态: 主缓存 ${report.cacheSize} 条, 短缓存 ${report.shortCacheSize} 条`, 
+                    'info');
+
+            } catch (error) {
+                addTestResult('performanceTests', `性能监控测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        function showAPIReport() {
+            addTestResult('performanceTests', '显示完整API报告...', 'info');
+            showAPIUsage();
+        }
+
+        async function testAPIManagement() {
+            addTestResult('managementTests', '开始测试API管理功能...', 'info');
+            
+            try {
+                // Test API toggle
+                restaurantAPI.toggleAPI('yelp', false);
+                addTestResult('managementTests', 'Yelp API已禁用', 'success');
+                
+                restaurantAPI.toggleAPI('yelp', true);
+                addTestResult('managementTests', 'Yelp API已重新启用', 'success');
+
+                // Test usage reset
+                const originalUsage = restaurantAPI.apis.yelp.used;
+                restaurantAPI.resetAPIUsage('yelp');
+                addTestResult('managementTests', `Yelp API使用量重置: ${originalUsage} → 0`, 'success');
+
+                // Test comprehensive report
+                const statusReport = restaurantAPI.getStatusReport();
+                addTestResult('managementTests', 
+                    `状态报告生成成功: ${Object.keys(statusReport.apis).length} 个API, 报告时间: ${statusReport.timestamp}`, 
+                    'success');
+
+            } catch (error) {
+                addTestResult('managementTests', `API管理测试失败: ${error.message}`, 'error');
+            }
+        }
+
+        function resetAllTests() {
+            document.getElementById('basicTests').innerHTML = '';
+            document.getElementById('restaurantTests').innerHTML = '';
+            document.getElementById('performanceTests').innerHTML = '';
+            document.getElementById('managementTests').innerHTML = '';
+            
+            // Reset API system
+            restaurantAPI.resetAPIUsage();
+            restaurantAPI.cache.clear();
+            restaurantAPI.shortCache.clear();
+            
+            addTestResult('managementTests', '所有测试已重置，API系统已清空', 'info');
+        }
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                addTestResult('basicTests', '页面加载完成，API系统已初始化', 'success');
+                addTestResult('basicTests', '提示: 点击测试按钮开始验证功能', 'info');
+            }, 1000);
+        });
+
+        // Console helpers
+        window.testHelpers = {
+            runAllTests: async () => {
+                await testAPIStatus();
+                await testCacheSystem();
+                await testRestaurantAPI();
+                await testPerformanceMonitoring();
+                await testAPIManagement();
+            },
+            getReport: () => restaurantAPI.getStatusReport(),
+            showDebugAPI: () => console.log(window.restaurantAPIDebug)
+        };
+    </script>
+</body>
+</html>

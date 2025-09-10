@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Test - Lunch Roulette</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; max-width: 800px; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .warning { background: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .location-info { background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .restaurant-card { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        pre { background: #f1f1f1; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        .log { max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎯 GPS Location Test</h1>
+    
+    <div class="status info">
+        <h3>GPS Status</h3>
+        <p id="gpsStatus">Initializing...</p>
+        <div id="locationInfo" class="location-info" style="display: none;">
+            <strong>Location Details:</strong>
+            <div id="locationDetails"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-primary" onclick="testGPS()">🎯 Test GPS Location</button>
+        <button class="btn-success" onclick="testQuickMode()">⚡ Quick Mode</button>
+        <button class="btn-warning" onclick="testWatchPosition()">👁️ Watch Position</button>
+        <button class="btn-danger" onclick="stopWatching()">🛑 Stop Watching</button>
+        <button class="btn-primary" onclick="testRestaurants()">🍽️ Test Restaurants</button>
+        <button onclick="clearLog()" style="background: #6c757d; color: white;">🗑️ Clear Log</button>
+    </div>
+
+    <div class="restaurant-test" id="restaurantTest" style="display: none;">
+        <h3>🍽️ Restaurant Test Results</h3>
+        <div id="restaurantResults"></div>
+    </div>
+
+    <div class="log-section">
+        <h3>📋 Debug Log</h3>
+        <div id="debugLog" class="log"></div>
+    </div>
+
+    <script>
+        let watchId = null;
+        
+        // Simple GPS service for testing
+        class TestGPSService {
+            async getCurrentLocation(highAccuracy = true) {
+                log(`🔍 Testing GPS (${highAccuracy ? 'high accuracy' : 'quick mode'})...`);
+                
+                return new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject(new Error('Geolocation not supported'));
+                        return;
+                    }
+                    
+                    const options = {
+                        enableHighAccuracy: highAccuracy,
+                        timeout: highAccuracy ? 10000 : 5000,
+                        maximumAge: highAccuracy ? 30000 : 60000
+                    };
+                    
+                    log(`⚙️ GPS Options: ${JSON.stringify(options)}`);
+                    
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const location = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                                accuracy: position.coords.accuracy,
+                                timestamp: position.timestamp
+                            };
+                            
+                            log(`✅ GPS Success: ${JSON.stringify(location)}`);
+                            resolve(location);
+                        },
+                        (error) => {
+                            log(`❌ GPS Error: ${error.message} (Code: ${error.code})`);
+                            reject(error);
+                        },
+                        options
+                    );
+                });
+            }
+            
+            startWatching() {
+                if (watchId !== null) {
+                    log('⚠️ Already watching position');
+                    return;
+                }
+                
+                log('👁️ Starting position watch...');
+                
+                watchId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        log(`📍 Position update: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)} (±${Math.round(position.coords.accuracy)}m)`);
+                        updateLocationDisplay(position.coords);
+                    },
+                    (error) => {
+                        log(`❌ Watch error: ${error.message}`);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 30000,
+                        maximumAge: 60000
+                    }
+                );
+                
+                log(`👁️ Watch started with ID: ${watchId}`);
+            }
+            
+            stopWatching() {
+                if (watchId !== null) {
+                    navigator.geolocation.clearWatch(watchId);
+                    log(`🛑 Stopped watching position (ID: ${watchId})`);
+                    watchId = null;
+                } else {
+                    log('⚠️ Not currently watching position');
+                }
+            }
+        }
+        
+        const testGPS = new TestGPSService();
+        
+        // Logging function
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logDiv = document.getElementById('debugLog');
+            logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        // Update location display
+        function updateLocationDisplay(coords) {
+            const statusDiv = document.getElementById('gpsStatus');
+            const locationInfo = document.getElementById('locationInfo');
+            const locationDetails = document.getElementById('locationDetails');
+            
+            statusDiv.innerHTML = `✅ GPS Location Acquired`;
+            statusDiv.parentElement.className = 'status success';
+            
+            locationDetails.innerHTML = `
+                <div><strong>Latitude:</strong> ${coords.latitude.toFixed(6)}</div>
+                <div><strong>Longitude:</strong> ${coords.longitude.toFixed(6)}</div>
+                <div><strong>Accuracy:</strong> ±${Math.round(coords.accuracy)} meters</div>
+                <div><strong>Timestamp:</strong> ${new Date(coords.timestamp || Date.now()).toLocaleString()}</div>
+                ${coords.altitude ? `<div><strong>Altitude:</strong> ${Math.round(coords.altitude)}m</div>` : ''}
+                ${coords.speed ? `<div><strong>Speed:</strong> ${Math.round(coords.speed * 3.6)} km/h</div>` : ''}
+            `;
+            
+            locationInfo.style.display = 'block';
+        }
+        
+        // Test functions
+        async function testGPS() {
+            try {
+                document.getElementById('gpsStatus').innerHTML = 'Testing GPS (high accuracy)...';
+                document.getElementById('gpsStatus').parentElement.className = 'status info';
+                
+                const location = await testGPS.getCurrentLocation(true);
+                updateLocationDisplay(location);
+                
+            } catch (error) {
+                document.getElementById('gpsStatus').innerHTML = `❌ GPS Failed: ${error.message}`;
+                document.getElementById('gpsStatus').parentElement.className = 'status error';
+                log(`❌ Test GPS failed: ${error.message}`);
+            }
+        }
+        
+        async function testQuickMode() {
+            try {
+                document.getElementById('gpsStatus').innerHTML = 'Testing GPS (quick mode)...';
+                document.getElementById('gpsStatus').parentElement.className = 'status warning';
+                
+                const location = await testGPS.getCurrentLocation(false);
+                updateLocationDisplay(location);
+                
+            } catch (error) {
+                document.getElementById('gpsStatus').innerHTML = `❌ Quick GPS Failed: ${error.message}`;
+                document.getElementById('gpsStatus').parentElement.className = 'status error';
+                log(`❌ Quick mode failed: ${error.message}`);
+            }
+        }
+        
+        function testWatchPosition() {
+            testGPS.startWatching();
+        }
+        
+        function stopWatching() {
+            testGPS.stopWatching();
+        }
+        
+        async function testRestaurants() {
+            const resultsDiv = document.getElementById('restaurantResults');
+            const testDiv = document.getElementById('restaurantTest');
+            
+            try {
+                log('🍽️ Testing restaurant search...');
+                
+                const location = await testGPS.getCurrentLocation(true);
+                
+                // Generate mock restaurants
+                const restaurants = generateMockRestaurants(location);
+                
+                resultsDiv.innerHTML = restaurants.map((restaurant, index) => `
+                    <div class="restaurant-card">
+                        <h4>${restaurant.name}</h4>
+                        <p><strong>Distance:</strong> ${restaurant.distance}</p>
+                        <p><strong>Rating:</strong> ⭐ ${restaurant.rating}</p>
+                        <p><strong>Address:</strong> ${restaurant.location}</p>
+                        <p><strong>Specialty:</strong> ${restaurant.specialty}</p>
+                    </div>
+                `).join('');
+                
+                testDiv.style.display = 'block';
+                log(`✅ Generated ${restaurants.length} mock restaurants`);
+                
+            } catch (error) {
+                log(`❌ Restaurant test failed: ${error.message}`);
+            }
+        }
+        
+        function generateMockRestaurants(userLocation) {
+            const restaurants = [
+                { name: 'Mario\'s Pizza', specialty: 'Wood-fired pizza', rating: '4.6' },
+                { name: 'Sushi Zen', specialty: 'Fresh sashimi', rating: '4.7' },
+                { name: 'The Burger Joint', specialty: 'Gourmet burgers', rating: '4.5' }
+            ];
+            
+            return restaurants.map(restaurant => {
+                const distance = Math.random() * 2; // 0-2km
+                const angle = Math.random() * 2 * Math.PI;
+                
+                // Simple distance calculation
+                const R = 6371;
+                const dLat = (distance / R) * (180 / Math.PI) * Math.cos(angle);
+                const dLng = (distance / R) * (180 / Math.PI) * Math.sin(angle);
+                
+                return {
+                    ...restaurant,
+                    distance: distance < 1 ? `${Math.round(distance * 1000)}m` : `${distance.toFixed(1)}km`,
+                    location: `${Math.floor(Math.random() * 999) + 100} Main St`,
+                    coordinates: {
+                        lat: userLocation.lat + dLat,
+                        lng: userLocation.lng + dLng
+                    }
+                };
+            }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        }
+        
+        function clearLog() {
+            document.getElementById('debugLog').innerHTML = '';
+        }
+        
+        // Check permissions and browser support
+        async function checkPermissions() {
+            log('🔐 Checking location permissions...');
+            
+            // Check if Permissions API is supported
+            if (navigator.permissions) {
+                try {
+                    const permission = await navigator.permissions.query({ name: 'geolocation' });
+                    log(`📋 Permission state: ${permission.state}`);
+                    
+                    if (permission.state === 'denied') {
+                        log('❌ Location permission denied');
+                        document.getElementById('gpsStatus').innerHTML = '❌ Location permission denied. Please enable location in browser settings.';
+                        document.getElementById('gpsStatus').parentElement.className = 'status error';
+                        return false;
+                    } else if (permission.state === 'prompt') {
+                        log('❓ Location permission will be requested');
+                        document.getElementById('gpsStatus').innerHTML = '❓ Location permission will be requested when you test GPS';
+                        document.getElementById('gpsStatus').parentElement.className = 'status warning';
+                    } else if (permission.state === 'granted') {
+                        log('✅ Location permission already granted');
+                        document.getElementById('gpsStatus').innerHTML = '✅ Location permission granted';
+                        document.getElementById('gpsStatus').parentElement.className = 'status success';
+                    }
+                    
+                    return permission.state !== 'denied';
+                } catch (error) {
+                    log('⚠️ Could not check permissions: ' + error.message);
+                }
+            } else {
+                log('⚠️ Permissions API not supported');
+            }
+            
+            return true;
+        }
+        
+        // Check browser and protocol
+        function checkBrowserEnvironment() {
+            log('🌐 Checking browser environment...');
+            
+            // Check protocol
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+                log('⚠️ Warning: Not using HTTPS. Some browsers may block geolocation.');
+                document.getElementById('gpsStatus').innerHTML = '⚠️ Warning: HTTPS may be required for GPS on this domain';
+                document.getElementById('gpsStatus').parentElement.className = 'status warning';
+            }
+            
+            // Check if in secure context
+            if (typeof isSecureContext !== 'undefined' && !isSecureContext) {
+                log('⚠️ Warning: Not in secure context');
+            }
+            
+            // Check browser type
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Chrome')) {
+                log('✅ Chrome browser detected (good GPS support)');
+            } else if (userAgent.includes('Firefox')) {
+                log('✅ Firefox browser detected (good GPS support)');
+            } else if (userAgent.includes('Safari')) {
+                log('✅ Safari browser detected (GPS support varies)');
+            } else {
+                log('⚠️ Unknown browser - GPS support may vary');
+            }
+        }
+        
+        // Manual location fallback
+        function showManualLocationOption() {
+            const manualDiv = document.createElement('div');
+            manualDiv.className = 'status warning';
+            manualDiv.innerHTML = `
+                <h3>📍 Manual Location Selection</h3>
+                <p>GPS not available. Please select your location manually:</p>
+                <select id="manualLocation" style="padding: 8px; margin: 10px 0; width: 200px;">
+                    <option value="">Select location...</option>
+                    <option value="sydney">Sydney, Australia</option>
+                    <option value="melbourne">Melbourne, Australia</option>
+                    <option value="brisbane">Brisbane, Australia</option>
+                    <option value="perth">Perth, Australia</option>
+                    <option value="adelaide">Adelaide, Australia</option>
+                </select>
+                <button class="btn-primary" onclick="useManualLocation()">Use Selected Location</button>
+            `;
+            
+            document.body.insertBefore(manualDiv, document.querySelector('.controls'));
+        }
+        
+        // Use manual location
+        function useManualLocation() {
+            const select = document.getElementById('manualLocation');
+            const selectedLocation = select.value;
+            
+            if (!selectedLocation) {
+                log('⚠️ No location selected');
+                return;
+            }
+            
+            const locations = {
+                sydney: { lat: -33.8688, lng: 151.2093, name: 'Sydney, Australia' },
+                melbourne: { lat: -37.8136, lng: 144.9631, name: 'Melbourne, Australia' },
+                brisbane: { lat: -27.4698, lng: 153.0251, name: 'Brisbane, Australia' },
+                perth: { lat: -31.9505, lng: 115.8605, name: 'Perth, Australia' },
+                adelaide: { lat: -34.9285, lng: 138.6007, name: 'Adelaide, Australia' }
+            };
+            
+            const location = locations[selectedLocation];
+            if (location) {
+                log(`📍 Using manual location: ${location.name}`);
+                
+                const coords = {
+                    latitude: location.lat,
+                    longitude: location.lng,
+                    accuracy: 1000, // 1km accuracy for manual selection
+                    timestamp: Date.now()
+                };
+                
+                updateLocationDisplay(coords);
+            }
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', async () => {
+            log('🎯 GPS Test Page Loaded');
+            log('ℹ️ Browser: ' + navigator.userAgent);
+            log('ℹ️ Geolocation support: ' + (navigator.geolocation ? 'YES' : 'NO'));
+            log('ℹ️ Protocol: ' + location.protocol);
+            log('ℹ️ Hostname: ' + location.hostname);
+            
+            checkBrowserEnvironment();
+            
+            const hasPermission = await checkPermissions();
+            
+            if (!navigator.geolocation) {
+                log('❌ Geolocation not supported');
+                showManualLocationOption();
+                return;
+            }
+            
+            // Don't auto-test if permission is denied
+            if (hasPermission) {
+                log('⏱️ Auto-testing GPS in 2 seconds...');
+                setTimeout(() => {
+                    testGPS();
+                }, 2000);
+            } else {
+                log('⚠️ Skipping auto-test due to permission issues');
+                showManualLocationOption();
+            }
+        });
+    </script>
+</body>
+</html>
