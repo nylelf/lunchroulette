@@ -552,7 +552,27 @@ function initializeApp() {
 }
 
 async function initializeGPSService() {
-    console.log('🎯 Initializing GPS location service...');
+    console.log('🎯 Initializing hybrid location service...');
+    
+    // Set up city selector
+    const citySelect = document.getElementById('citySelect');
+    if (citySelect) {
+        // Load saved city or default to Sydney
+        const savedCity = localStorage.getItem('selectedCity') || 'sydney';
+        citySelect.value = savedCity;
+        locationService.setSelectedCity(savedCity);
+        
+        // Add event listener for city changes
+        citySelect.addEventListener('change', function() {
+            const selectedCity = this.value;
+            locationService.setSelectedCity(selectedCity);
+            localStorage.setItem('selectedCity', selectedCity);
+            console.log(`🏙️ City changed to: ${locationService.getSelectedCityInfo().name}`);
+            
+            // Refresh location after city change
+            refreshGPSLocation();
+        });
+    }
     
     // Set up location refresh button
     const refreshBtn = document.getElementById('locationRefresh');
@@ -569,17 +589,17 @@ async function initializeGPSService() {
     }
     
     // Show initial detecting state
-    gpsService.updateLocationDisplay();
+    locationService.updateLocationDisplay();
     
     // Try to get initial location
     try {
         console.log('Requesting GPS location...');
-        const locationInfo = await gpsService.getCurrentLocation();
+        const locationInfo = await locationService.getCurrentLocation();
         console.log('✅ GPS location service initialized successfully:', locationInfo);
         
         // Start watching location changes after successful initial location
         setTimeout(() => {
-            gpsService.startWatching();
+            locationService.startWatching();
         }, 1000);
         
     } catch (error) {
@@ -600,7 +620,7 @@ async function initializeGPSService() {
             friendlyMessage = 'GPS unavailable. Using manual selection below.';
         }
         
-        gpsService.updateLocationDisplay(new Error(friendlyMessage));
+        locationService.updateLocationDisplay(new Error(friendlyMessage));
     }
 }
 
@@ -663,7 +683,7 @@ window.handleManualLocationChange = function() {
         console.log(`📍 Using manual location: ${location.name}`);
         
         // Set GPS service location manually
-        gpsService.userLocation = {
+        locationService.userLocation = {
             lat: location.lat,
             lng: location.lng,
             accuracy: location.accuracy,
@@ -3142,7 +3162,7 @@ window.refreshGPSLocation = async function() {
     if (refreshBtn) refreshBtn.innerHTML = '⏳';
     
     try {
-        await gpsService.getCurrentLocation();
+        await locationService.getCurrentLocation();
         if (refreshBtn) refreshBtn.innerHTML = '🔄';
     } catch (error) {
         if (refreshBtn) refreshBtn.innerHTML = '❌';
@@ -3206,58 +3226,162 @@ window.restaurantAPIDebug = {
     resetUsage: (name) => restaurantAPI.resetAPIUsage(name),
     clearCache: () => { restaurantAPI.cache.clear(); restaurantAPI.shortCache.clear(); },
     healthCheck: (name) => restaurantAPI.performHealthCheck(name),
-    gpsService: gpsService,
-    testLocation: () => gpsService.getCurrentLocation(),
-    watchLocation: () => gpsService.startWatching(),
-    stopWatch: () => gpsService.stopWatching()
+    locationService: locationService,
+    testLocation: () => locationService.getCurrentLocation(),
+    watchLocation: () => locationService.startWatching(),
+    stopWatch: () => locationService.stopWatching()
 };
 
 // Pure GPS Location Service - No city fallback
-class GPSLocationService {
+class HybridLocationService {
     constructor() {
         this.userLocation = null;
+        this.selectedCity = 'sydney';
+        this.cityRegions = {
+            sydney: {
+                name: 'Greater Sydney Area',
+                center: { lat: -33.8688, lng: 151.2093 },
+                bounds: {
+                    north: -33.4,
+                    south: -34.2,
+                    east: 151.8,
+                    west: 150.5
+                }
+            },
+            melbourne: {
+                name: 'Greater Melbourne Area',
+                center: { lat: -37.8136, lng: 144.9631 },
+                bounds: {
+                    north: -37.4,
+                    south: -38.2,
+                    east: 145.8,
+                    west: 144.0
+                }
+            },
+            brisbane: {
+                name: 'Greater Brisbane Area',
+                center: { lat: -27.4698, lng: 153.0251 },
+                bounds: {
+                    north: -26.8,
+                    south: -28.0,
+                    east: 153.8,
+                    west: 152.4
+                }
+            },
+            perth: {
+                name: 'Greater Perth Area',
+                center: { lat: -31.9505, lng: 115.8605 },
+                bounds: {
+                    north: -31.4,
+                    south: -32.5,
+                    east: 116.4,
+                    west: 115.2
+                }
+            },
+            adelaide: {
+                name: 'Greater Adelaide Area',
+                center: { lat: -34.9285, lng: 138.6007 },
+                bounds: {
+                    north: -34.4,
+                    south: -35.4,
+                    east: 139.2,
+                    west: 138.0
+                }
+            }
+        };
         this.locationAccuracy = null;
         this.locationAge = null;
         this.isWatching = false;
         this.watchId = null;
     }
     
+    setSelectedCity(cityKey) {
+        this.selectedCity = cityKey;
+        this.updateLocationDisplay();
+        console.log(`🏙️ Selected region: ${this.cityRegions[cityKey].name}`);
+    }
+    
+    getSelectedCityInfo() {
+        return this.cityRegions[this.selectedCity];
+    }
+    
     async getCurrentLocation() {
+        const cityInfo = this.getSelectedCityInfo();
+        
         try {
-            // Try high accuracy first
-            const location = await this.getGPSLocation(true);
-            this.userLocation = location;
-            this.locationAge = Date.now();
-            this.updateLocationDisplay();
+            // Try high accuracy GPS first
+            const gpsLocation = await this.getGPSLocation(true);
             
-            console.log(`📍 GPS Location: ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)} (±${Math.round(location.accuracy)}m)`);
-            return {
-                location: location,
-                accuracy: 'gps',
-                source: `GPS coordinates (±${Math.round(location.accuracy)}m)`
-            };
+            // Validate GPS is within selected city region
+            if (this.isLocationInCityRegion(gpsLocation, this.selectedCity)) {
+                this.userLocation = gpsLocation;
+                this.locationAge = Date.now();
+                this.updateLocationDisplay();
+                
+                console.log(`📍 GPS Location in ${cityInfo.name}: ${gpsLocation.lat.toFixed(6)}, ${gpsLocation.lng.toFixed(6)} (±${Math.round(gpsLocation.accuracy)}m)`);
+                return {
+                    location: gpsLocation,
+                    accuracy: 'gps',
+                    source: `GPS in ${cityInfo.name} (±${Math.round(gpsLocation.accuracy)}m)`,
+                    region: cityInfo.name
+                };
+            } else {
+                console.warn(`GPS location outside ${cityInfo.name}, using city center as fallback`);
+                return this.useCityFallback();
+            }
         } catch (error) {
             console.warn('High accuracy GPS failed, trying quick mode:', error.message);
             
             try {
-                // Fallback to quick mode
-                const location = await this.getGPSLocation(false);
-                this.userLocation = location;
-                this.locationAge = Date.now();
-                this.updateLocationDisplay();
+                // Fallback to quick mode GPS
+                const gpsLocation = await this.getGPSLocation(false);
                 
-                console.log(`📍 GPS Location (quick mode): ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)} (±${Math.round(location.accuracy)}m)`);
-                return {
-                    location: location,
-                    accuracy: 'gps_quick',
-                    source: `GPS coordinates - quick mode (±${Math.round(location.accuracy)}m)`
-                };
+                if (this.isLocationInCityRegion(gpsLocation, this.selectedCity)) {
+                    this.userLocation = gpsLocation;
+                    this.locationAge = Date.now();
+                    this.updateLocationDisplay();
+                    
+                    console.log(`📍 GPS Location (quick) in ${cityInfo.name}: ${gpsLocation.lat.toFixed(6)}, ${gpsLocation.lng.toFixed(6)} (±${Math.round(gpsLocation.accuracy)}m)`);
+                    return {
+                        location: gpsLocation,
+                        accuracy: 'gps_quick',
+                        source: `GPS quick mode in ${cityInfo.name} (±${Math.round(gpsLocation.accuracy)}m)`,
+                        region: cityInfo.name
+                    };
+                } else {
+                    console.warn(`GPS quick mode outside ${cityInfo.name}, using city center`);
+                    return this.useCityFallback();
+                }
             } catch (quickError) {
-                console.error('All GPS location methods failed:', quickError.message);
-                this.updateLocationDisplay(quickError);
-                throw quickError;
+                console.error('All GPS methods failed, using city center:', quickError.message);
+                return this.useCityFallback();
             }
         }
+    }
+    
+    useCityFallback() {
+        const cityInfo = this.getSelectedCityInfo();
+        this.userLocation = cityInfo.center;
+        this.locationAge = Date.now();
+        this.updateLocationDisplay();
+        
+        console.log(`🏙️ Using ${cityInfo.name} center: ${cityInfo.center.lat.toFixed(6)}, ${cityInfo.center.lng.toFixed(6)}`);
+        return {
+            location: cityInfo.center,
+            accuracy: 'city',
+            source: `${cityInfo.name} center (approximate)`,
+            region: cityInfo.name
+        };
+    }
+    
+    isLocationInCityRegion(location, cityKey) {
+        const bounds = this.cityRegions[cityKey].bounds;
+        return (
+            location.lat >= bounds.south &&
+            location.lat <= bounds.north &&
+            location.lng >= bounds.west &&
+            location.lng <= bounds.east
+        );
     }
     
     async getGPSLocation(highAccuracy = true) {
@@ -3348,23 +3472,32 @@ class GPSLocationService {
     updateLocationDisplay(error = null) {
         const locationText = document.getElementById('locationText');
         const locationIcon = document.querySelector('#locationDisplay .settings-icon');
+        const cityInfo = this.getSelectedCityInfo();
         
         if (!locationText) return;
         
         if (error) {
-            locationText.textContent = `Location unavailable: ${error.message}`;
-            locationText.style.color = '#dc3545';
-            if (locationIcon) locationIcon.textContent = '❌';
+            locationText.textContent = `Using ${cityInfo.name}`;
+            locationText.style.color = '#ffc107';
+            if (locationIcon) locationIcon.textContent = '🏙️';
             return;
         }
         
         if (this.userLocation) {
-            const accuracy = Math.round(this.userLocation.accuracy);
-            locationText.textContent = `GPS Location (±${accuracy}m)`;
-            locationText.style.color = '#28a745';
-            if (locationIcon) locationIcon.textContent = '🎯';
+            if (this.userLocation.accuracy) {
+                // GPS location
+                const accuracy = Math.round(this.userLocation.accuracy);
+                locationText.textContent = `GPS in ${cityInfo.name} (±${accuracy}m)`;
+                locationText.style.color = '#28a745';
+                if (locationIcon) locationIcon.textContent = '🎯';
+            } else {
+                // City center fallback
+                locationText.textContent = `${cityInfo.name} center`;
+                locationText.style.color = '#17a2b8';
+                if (locationIcon) locationIcon.textContent = '🏙️';
+            }
         } else {
-            locationText.textContent = 'Detecting location...';
+            locationText.textContent = `Detecting GPS in ${cityInfo.name}...`;
             locationText.style.color = '#6c757d';
             if (locationIcon) locationIcon.textContent = '🔍';
         }
@@ -3390,8 +3523,8 @@ class GPSLocationService {
     }
 }
 
-// Initialize GPS location service
-const gpsService = new GPSLocationService();
+// Initialize Hybrid location service
+const locationService = new HybridLocationService();
 
 // Simplified restaurant finder using GPS coordinates
 async function getRestaurantsNearLocation(dish, category, location) {
@@ -3415,35 +3548,39 @@ async function getRestaurantsNearLocation(dish, category, location) {
     }
 }
 
-// Generate mock restaurant data near GPS location
+// Generate mock restaurant data near GPS location within selected city
 function generateMockRestaurantsNearLocation(dish, category, userLocation) {
+    // Get current city info for context
+    const cityInfo = locationService.getSelectedCityInfo();
+    const cityName = cityInfo.name.split(' ')[0]; // Extract city name (e.g., "Sydney" from "Greater Sydney Area")
+    
     const restaurantTypes = {
         'Pizza': [
-            { name: 'Mario\'s Authentic Pizza', specialty: 'Wood-fired Neapolitan', rating: 4.6 },
-            { name: 'Slice House', specialty: 'New York Style', rating: 4.3 },
-            { name: 'Gourmet Pizza Co.', specialty: 'Artisan Toppings', rating: 4.5 }
+            { name: `Mario's Authentic Pizza`, specialty: 'Wood-fired Neapolitan', rating: 4.6, suburb: getRandomSuburb(cityName) },
+            { name: `${cityName} Slice House`, specialty: 'New York Style', rating: 4.3, suburb: getRandomSuburb(cityName) },
+            { name: `Gourmet Pizza Co.`, specialty: 'Artisan Toppings', rating: 4.5, suburb: getRandomSuburb(cityName) }
         ],
         'Sushi': [
-            { name: 'Sakura Sushi Bar', specialty: 'Fresh Sashimi', rating: 4.7 },
-            { name: 'Edo Japanese', specialty: 'Traditional Rolls', rating: 4.4 },
-            { name: 'Sushi Express', specialty: 'Quick Service', rating: 4.2 }
+            { name: `Sakura Sushi Bar ${cityName}`, specialty: 'Fresh Sashimi', rating: 4.7, suburb: getRandomSuburb(cityName) },
+            { name: `Edo Japanese`, specialty: 'Traditional Rolls', rating: 4.4, suburb: getRandomSuburb(cityName) },
+            { name: `${cityName} Sushi Express`, specialty: 'Quick Service', rating: 4.2, suburb: getRandomSuburb(cityName) }
         ],
         'Burger': [
-            { name: 'The Burger Joint', specialty: 'Gourmet Burgers', rating: 4.5 },
-            { name: 'Patty Palace', specialty: 'Classic American', rating: 4.3 },
-            { name: 'Veggie Burger Bar', specialty: 'Plant-Based', rating: 4.4 }
+            { name: `The ${cityName} Burger Joint`, specialty: 'Gourmet Burgers', rating: 4.5, suburb: getRandomSuburb(cityName) },
+            { name: `Patty Palace`, specialty: 'Classic American', rating: 4.3, suburb: getRandomSuburb(cityName) },
+            { name: `Veggie Burger Bar`, specialty: 'Plant-Based', rating: 4.4, suburb: getRandomSuburb(cityName) }
         ],
         'Coffee': [
-            { name: 'Brew & Bean', specialty: 'Artisan Coffee', rating: 4.6 },
-            { name: 'Local Roasters', specialty: 'Single Origin', rating: 4.5 },
-            { name: 'Corner Café', specialty: 'Cozy Atmosphere', rating: 4.2 }
+            { name: `${cityName} Brew & Bean`, specialty: 'Artisan Coffee', rating: 4.6, suburb: getRandomSuburb(cityName) },
+            { name: `Local Roasters`, specialty: 'Single Origin', rating: 4.5, suburb: getRandomSuburb(cityName) },
+            { name: `Corner Café`, specialty: 'Cozy Atmosphere', rating: 4.2, suburb: getRandomSuburb(cityName) }
         ]
     };
     
     const templates = restaurantTypes[dish] || [
-        { name: `${dish} Express`, specialty: `Fresh ${dish}`, rating: 4.3 },
-        { name: `The ${dish} Place`, specialty: `Traditional ${dish}`, rating: 4.4 },
-        { name: `${dish} Corner`, specialty: `Quick ${dish}`, rating: 4.2 }
+        { name: `${dish} Express`, specialty: `Fresh ${dish}`, rating: 4.3, suburb: getRandomSuburb(cityName) },
+        { name: `The ${dish} Place`, specialty: `Traditional ${dish}`, rating: 4.4, suburb: getRandomSuburb(cityName) },
+        { name: `${dish} Corner`, specialty: `Quick ${dish}`, rating: 4.2, suburb: getRandomSuburb(cityName) }
     ];
     
     return templates.map((template, index) => {
@@ -3460,19 +3597,39 @@ function generateMockRestaurantsNearLocation(dish, category, userLocation) {
             lng: userLocation.lng + lngOffset
         };
         
-        const actualDistance = gpsService.calculateDistance(userLocation, restaurantLocation);
+        const actualDistance = locationService.calculateDistance(userLocation, restaurantLocation);
         
         return {
             name: template.name,
-            location: `${Math.floor(Math.random() * 999) + 100} Main St, Local Area`,
+            location: `${Math.floor(Math.random() * 999) + 100} ${getRandomStreetName()} St, ${template.suburb}`,
             rating: template.rating.toFixed(1),
             priceLevel: '💰'.repeat(Math.floor(Math.random() * 3) + 1),
             specialty: template.specialty,
-            distance: gpsService.formatDistance(actualDistance),
+            distance: locationService.formatDistance(actualDistance),
             coordinates: restaurantLocation,
-            phone: `+1 (${Math.floor(Math.random() * 900) + 100}) ${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`
+            phone: `+61 ${Math.floor(Math.random() * 9) + 1} ${Math.floor(Math.random() * 9000) + 1000} ${Math.floor(Math.random() * 9000) + 1000}`
         };
     }).sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance)); // Sort by distance
+}
+
+// Helper function to get random suburb based on city
+function getRandomSuburb(cityName) {
+    const suburbs = {
+        'Sydney': ['CBD', 'Circular Quay', 'Darling Harbour', 'Surry Hills', 'Paddington', 'Newtown', 'Bondi', 'Manly', 'Parramatta', 'Chatswood'],
+        'Melbourne': ['CBD', 'Southbank', 'Fitzroy', 'Richmond', 'St Kilda', 'Carlton', 'Brunswick', 'Prahran', 'Chapel St', 'Docklands'],
+        'Brisbane': ['CBD', 'South Bank', 'Fortitude Valley', 'New Farm', 'West End', 'Paddington', 'Teneriffe', 'Spring Hill', 'Kangaroo Point', 'Woolloongabba'],
+        'Perth': ['CBD', 'Northbridge', 'Fremantle', 'Subiaco', 'Leederville', 'Mount Lawley', 'Cottesloe', 'Scarborough', 'Joondalup', 'Rockingham'],
+        'Adelaide': ['CBD', 'North Adelaide', 'Glenelg', 'Port Adelaide', 'Norwood', 'Unley', 'Burnside', 'Prospect', 'Henley Beach', 'Brighton']
+    };
+    
+    const citySuburbs = suburbs[cityName] || ['CBD', 'Downtown', 'Central', 'Main Area'];
+    return citySuburbs[Math.floor(Math.random() * citySuburbs.length)];
+}
+
+// Helper function to get random street names
+function getRandomStreetName() {
+    const streetNames = ['Collins', 'George', 'Pitt', 'Elizabeth', 'King', 'Queen', 'Market', 'Park', 'Church', 'High', 'Main', 'Commercial', 'Crown', 'Bourke', 'Flinders', 'Spencer', 'William', 'Little'];
+    return streetNames[Math.floor(Math.random() * streetNames.length)];
 }
 
 // Pure GPS-based restaurant finder
@@ -3484,7 +3641,7 @@ window.showTop3RestaurantsNearby = async function(dish, category) {
     
     try {
         // Get GPS location
-        const locationInfo = await gpsService.getCurrentLocation();
+        const locationInfo = await locationService.getCurrentLocation();
         const { location, accuracy, source } = locationInfo;
         
         console.log(`🎯 Using GPS location for ${dish} search: ${source}`);

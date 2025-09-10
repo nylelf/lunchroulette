@@ -18,10 +18,20 @@
                     <span data-lang-key="app-title">Lunch Roulette</span>
                 </h1>
                 <div class="location-status">
+                    <div class="settings-item" id="citySelector">
+                        <span class="settings-icon">🏙️</span>
+                        <select id="citySelect" class="settings-select">
+                            <option value="sydney">Sydney, Australia</option>
+                            <option value="melbourne">Melbourne, Australia</option>
+                            <option value="brisbane">Brisbane, Australia</option>
+                            <option value="perth">Perth, Australia</option>
+                            <option value="adelaide">Adelaide, Australia</option>
+                        </select>
+                    </div>
                     <div class="settings-item" id="locationDisplay">
                         <span class="settings-icon">🎯</span>
-                        <span id="locationText">Detecting location...</span>
-                        <button id="locationRefresh" class="icon-btn" style="margin-left: 10px; padding: 5px;" title="Refresh location">
+                        <span id="locationText">Detecting GPS...</span>
+                        <button id="locationRefresh" class="icon-btn" style="margin-left: 10px; padding: 5px;" title="Refresh GPS location">
                             🔄
                         </button>
                     </div>
